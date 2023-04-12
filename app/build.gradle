@@ -4,12 +4,12 @@ plugins {
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "33.0.0"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.auditorias.applpas"
-        minSdkVersion 30
-        targetSdkVersion 33
+        minSdkVersion 16
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -31,9 +31,11 @@ android {
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
 }
