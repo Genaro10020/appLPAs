@@ -56,7 +56,7 @@
 
         <EditText
 
-            android:id="@+id/NombreLog"
+            android:id="@+id/nomina"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
@@ -73,7 +73,7 @@
 
 
         <EditText
-            android:id="@+id/ClaveLog"
+            android:id="@+id/clave"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
