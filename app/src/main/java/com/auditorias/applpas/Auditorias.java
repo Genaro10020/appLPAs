@@ -20,7 +20,7 @@ public class Auditorias extends AppCompatActivity {
 
 
         // Creamos varios LinearLayouts hijos
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             // Creamos el LinearLayout hijo
             LinearLayout linearLayoutHijo = new LinearLayout(this);
             linearLayoutHijo.setOrientation(LinearLayout.VERTICAL);
@@ -32,8 +32,13 @@ public class Auditorias extends AppCompatActivity {
             // Creamos las cuatro líneas de texto
             for (int j = 0; j < 4; j++) {
                 TextView textView = new TextView(this);
+
                 textView.setText("Texto de la línea " + (j + 1));
+                if(j+1==1){
+                    textView.setTextSize(18);
+                }
                 linearLayoutHijo.addView(textView);
+
             }
 
 
