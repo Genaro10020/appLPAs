@@ -60,9 +60,12 @@ public class Login extends AppCompatActivity {
                             Log.e("RESPUESTA",""+response);
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
+
                                 String id_auditor = jsonResponse.getString("id_auditor");
                                 String nombre_auditor = jsonResponse.getString("auditor");
-                                enviarVistaAditorias(id_auditor,nombre_auditor);
+                                String tipo_usuario = jsonResponse.getString("tipo_usuario");
+
+                                enviarVistaAditorias(id_auditor,nombre_auditor,tipo_usuario);
 
 
                             } catch (JSONException e) {
@@ -89,10 +92,11 @@ public class Login extends AppCompatActivity {
 
 
     //METODO PARA ENVIARTE A LA PANTALL CORRESPONDIENTE SEGUN TIPO USUARIO
-            private void enviarVistaAditorias(String id_auditor, String nombre_auditor){
+            private void enviarVistaAditorias(String id_auditor, String nombre_auditor, String tipo_usuario){
                 Intent intent = new Intent(Login.this, Auditorias.class);
                 intent.putExtra("ID_AUDITOR", id_auditor);
                 intent.putExtra("NOMBRE_AUDITOR", nombre_auditor);
+                intent.putExtra("TIPO_USUARIO",tipo_usuario);
                 startActivity(intent);
             }
         }
