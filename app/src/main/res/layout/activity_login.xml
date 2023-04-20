@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="PLA's \n B I E N V E  N I D @"
+        android:text="LPA's \n B I E N V E  N I D @"
         android:textColor="#8B0000"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"

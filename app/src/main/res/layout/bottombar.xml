@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:background="#8B0000"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -19,6 +19,7 @@
 
 
         <LinearLayout
+            android:id="@+id/layoutBtnUno"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -42,6 +43,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layoutBtnDos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -49,7 +51,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/btnHallazgoz"
+                android:id="@+id/btnHallazgos"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/icono_hallazgos" />

@@ -22,6 +22,10 @@
         <activity android:name=".Auditorias"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".Auditando"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

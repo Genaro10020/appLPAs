@@ -85,6 +85,7 @@ public class Auditorias extends AppCompatActivity {
 
                                         // posicion de arreglo en objeto para extraer
                                         JSONObject jsonObjectAuditoria = auditoriasArreglo.getJSONObject(i);
+                                        String id_proceso = jsonObjectAuditoria.getString("id_proceso");
 
                                         // Obtenemos el LinearLayout padre
                                         LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
@@ -133,14 +134,20 @@ public class Auditorias extends AppCompatActivity {
                                         button.setTextColor(Color.WHITE);
                                         button.setTextSize(12);
                                         button.setText("Iniciar Auditoría");
-
                                         //Agregando el boton y agregnado padding.
                                         linearLayoutHijo.addView(button);
                                         linearLayoutHijo.setPadding(50, 10, 0, 50);
-
                                         // Set background drawable for the button
                                         Drawable drawable = getResources().getDrawable(R.drawable.fondo_btn);
                                         button.setBackground(drawable);
+
+                                        button.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Log.e("","Precionaste"+id_proceso);
+                                                enviarAuditando(id_proceso);
+                                            }
+                                        });
 
                                         // Creamos un TextView de separación
                                         TextView separador = new TextView(this);
@@ -153,7 +160,7 @@ public class Auditorias extends AppCompatActivity {
 
                                     }
                         } else {
-                                        Log.e("", "VACIO ARREGLO");
+                                        //Log.e("", "ARREGLO VACIO");
                                         View viewToast = getLayoutInflater().inflate(R.layout.mensaje_positivo, (ViewGroup) findViewById(R.id.layout_positivo));
                                         TextView tituloMensaje=viewToast.findViewById(R.id.tituloMensaje);
                                         TextView cuerpoMensaje=viewToast.findViewById(R.id.cuerpoMensaje);
@@ -166,7 +173,7 @@ public class Auditorias extends AppCompatActivity {
                                         toast.show();
                         }
                     } catch (JSONException e) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Posiblemente no existen auditorías.", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Posiblemente conexión de Internet.", Toast.LENGTH_LONG);
                         toast.show();
                     }
 
@@ -185,4 +192,11 @@ public class Auditorias extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
     }
+
+
+   private void enviarAuditando(String id_proceso){
+        Intent intent = new Intent(Auditorias.this, Auditando.class);
+        intent.putExtra("ID_PROCESO",id_proceso);
+        startActivity(intent);
+   }
 }
