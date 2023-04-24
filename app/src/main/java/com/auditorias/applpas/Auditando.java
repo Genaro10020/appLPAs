@@ -98,45 +98,71 @@ public class Auditando extends AppCompatActivity {
 
                         // Agrega el TextView al LinearLayout
                         linearLayoutHijo.addView(textViewPregunta);
+                        linearLayoutHijo.setPadding(50, 10, 0, 10);
 
-                        if (tipo_boton.equals("Si No y Na")){
+
+
+
+                       if (tipo_boton.equals("Si No y Na")){
 
                             Button boton1 = new Button(getApplicationContext());
                             boton1.setText("SI");
-
                             Button boton2 = new Button(getApplicationContext());
                             boton2.setText("NO");
+                            TextView textView = new TextView(getApplicationContext());
+                            textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+                            textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                            textView.setPadding(20,0,0,0);
+
+                            EditText editNo = new EditText(getApplicationContext());
+                            editNo.setTextSize(12);
+                            editNo.setBackground(getResources().getDrawable(R.drawable.fondo_edits));
+                            editNo.setHint("Coloque la respuesta");
+
 
                             Button boton3 = new Button(getApplicationContext());
                             boton3.setText("N/A");
 
+
+
                             // Agrega los tres botones al LinearLayout hijo
                             linearLayoutHijo.addView(boton1);
                             linearLayoutHijo.addView(boton2);
+                            linearLayoutHijo.addView(textView);
+                            linearLayoutHijo.addView(editNo);
                             linearLayoutHijo.addView(boton3);
-                        }else if(tipo_boton.equals("Si y No")){
+
+
+                        } else if(tipo_boton.equals("Si y No")){
                             Button boton1 = new Button(getApplicationContext());
                             boton1.setText("SI");
 
                             Button boton2 = new Button(getApplicationContext());
                             boton2.setText("NO");
+
+                            TextView textView = new TextView(getApplicationContext());
+                            textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+
                             linearLayoutHijo.addView(boton1);
                             linearLayoutHijo.addView(boton2);
+                            linearLayoutHijo.addView(textView);
+
                         }else if(tipo_boton.equals("Pregunta abierta")){
                             EditText edit = new EditText(getApplicationContext());
                             linearLayoutHijo.addView(edit);
                         }
 
-                        linearLayoutHijo.setPadding(50, 10, 0, 10);
-
+                        // Agregamos el LinearLayout hijo al LinearLayout padre
                         // Creamos un TextView de separación
                         TextView separador = new TextView(getApplicationContext());
                         separador.setLayoutParams(new LinearLayout.LayoutParams(5, LinearLayout.LayoutParams.MATCH_PARENT));
-
-
-                        // Agregamos el LinearLayout hijo al LinearLayout padre
-                        linearLayoutPadre.addView(linearLayoutHijo);
                         linearLayoutPadre.addView(separador);
+                        linearLayoutPadre.addView(linearLayoutHijo);
+
+
+
+
+
 
 
 
