@@ -32,7 +32,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Auditando extends AppCompatActivity {
+    JSONArray arrayPreguntas;
+    int cantidad_preguntas;
+
+
     String id_proceso;
+    Button[] arregloBtnSi;
+    Button[] arregloBtnNo;
+    Button[] arregloBtnNA;
+    EditText[] arregloEditSi;
+    EditText[] arregloEditNo;
+    EditText[] arregloEditNA;
+    EditText[] editPreguntaAbierta;
+
+
+    String[] respuesta;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,15 +61,51 @@ public class Auditando extends AppCompatActivity {
 
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
         layoutBtnDos.setVisibility(View.GONE);
+        TextView textUno = (TextView)findViewById(R.id.textView1);
+        textUno.setText("Guardar");
+        titulo.setText("Auditando");
+
+                consultarPreguntas();
 
         Button btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
-        TextView textUno = (TextView)findViewById(R.id.textView1);
-        textUno.setText("Guardar");
+                btnGuardar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for (int i =0; i < arrayPreguntas.length(); i++) {
+                                try {
+                                    JSONObject preguntas = arrayPreguntas.getJSONObject(i);
+                                    String tipo_boton = preguntas.getString("tipo_boton");
 
-        titulo.setText("Auditando");
-        consultarPreguntas();
+                                    if (tipo_boton.equals("Si No y Na")) {
+                                        String tomandorespuestaSi,tomandorespuestaNo,tomandorespuestaNA;
+                                               tomandorespuestaSi = arregloEditSi[i].getText().toString();
+                                               tomandorespuestaNo = arregloEditNo[i].getText().toString();
+                                               tomandorespuestaNA = arregloEditNA[i].getText().toString();
+
+                                        if(!tomandorespuestaSi.isEmpty()){
+                                            Log.e("ENTRE", "SI");
+                                        }else if(!tomandorespuestaNo.isEmpty()){
+                                            Log.e("ENTRE", "NO");
+                                        }else if(!tomandorespuestaNA.isEmpty()){
+                                            Log.e("ENTRE", "NA");
+                                        }else{
+                                            Log.e("ENTRE", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
+                                        }
+
+                                        //Log.e("RESPUESTA",":"+respuesta[i]);
+
+
+                                    }
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                        }
+                    }
+                });
     }
 
 
@@ -67,20 +117,20 @@ public class Auditando extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.i("","Respuesta"+response);
                 try {
-                    JSONArray arrayPreguntas = new JSONArray(response);
+                    arrayPreguntas = new JSONArray(response);
 
-                    int cantidad = arrayPreguntas.length();
+                    cantidad_preguntas = arrayPreguntas.length();
+
+                    arregloBtnSi = new Button[cantidad_preguntas];
+                    arregloBtnNo = new Button[cantidad_preguntas];
+                    arregloBtnNA = new Button[cantidad_preguntas];
+                    arregloEditSi = new EditText[cantidad_preguntas];
+                    arregloEditNo = new EditText[cantidad_preguntas];
+                    arregloEditNA = new EditText[cantidad_preguntas];
+                    editPreguntaAbierta = new EditText[cantidad_preguntas];
 
 
-
-                    Button[] arregloBtnSi = new Button[cantidad];
-                    Button[] arregloBtnNo = new Button[cantidad];
-                    EditText[] arregloEditSi = new EditText[cantidad];
-                    EditText[] arregloEditNo = new EditText[cantidad];
-
-
-
-                    Log.e("Largo del los arreglos","Cantidad"+cantidad);
+                    Log.e("Largo del los arreglos","Cantidad"+cantidad_preguntas);
                     for (int i=0; i < arrayPreguntas.length(); i++){
                         JSONObject jsonObjectPreguntas = arrayPreguntas.getJSONObject(i);
 
@@ -93,8 +143,6 @@ public class Auditando extends AppCompatActivity {
 
                         LinearLayout linearLayoutHijo = new LinearLayout(getApplicationContext());
                         linearLayoutHijo.setOrientation(LinearLayout.VERTICAL);
-
-
 
                         // Agregamos el fondo drawable al LinearLayout hijo
                         linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_preguntas));
@@ -113,102 +161,174 @@ public class Auditando extends AppCompatActivity {
                         linearLayoutHijo.setPadding(50, 10, 50, 10);
 
 
-
-
                        if (tipo_boton.equals("Si No y Na")){
+                                   arregloBtnSi[i] = new Button(getApplicationContext());
+                                   arregloBtnSi[i].setText("SI");
 
-                           arregloBtnSi[i] = new Button(getApplicationContext());
-                           arregloBtnSi[i].setText("SI");
-
-                               arregloEditSi[i] = new EditText(getApplicationContext());
-                               arregloEditSi[i].setTextSize(12);
-                               arregloEditSi[i].setPadding(10,0,10,0);
-                               LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                               parametrosEditSi.setMargins(0,10,0,0);
-                               arregloEditSi[i].setLayoutParams(parametrosEditSi);
-                               arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
-                               arregloEditSi[i].setHint("Coloque la respuesta");
-                               arregloEditSi[i].setVisibility(View.GONE);
-
-
-                               TextView textView = new TextView(getApplicationContext());
-                               textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
-                               textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
-                               textView.setPadding(20,0,0,0);
-                               textView.setVisibility(View.GONE);
+                                       arregloEditSi[i] = new EditText(getApplicationContext());
+                                       arregloEditSi[i].setTextSize(12);
+                                       arregloEditSi[i].setPadding(10,0,10,0);
+                                       LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                       parametrosEditSi.setMargins(0,10,0,0);
+                                       arregloEditSi[i].setLayoutParams(parametrosEditSi);
+                                       arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                       arregloEditSi[i].setHint("Coloque la respuesta");
+                                       arregloEditSi[i].setVisibility(View.GONE);
 
 
-                           arregloBtnNo[i] = new Button(getApplicationContext());
-                           arregloBtnNo[i].setText("NO");
+                                       TextView textView = new TextView(getApplicationContext());
+                                       textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar E-MI-CC");
+                                       textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                                       textView.setPadding(20,0,0,0);
+                                       textView.setVisibility(View.GONE);
 
 
-                               arregloEditNo[i] = new EditText(getApplicationContext());
-                               arregloEditNo[i].setTextSize(12);
-                               arregloEditNo[i].setPadding(10,0,10,0);
-                               LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                               parametros.setMargins(0,10,0,0);
-                               arregloEditNo[i].setLayoutParams(parametros);
-                               arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
-                               arregloEditNo[i].setHint("Coloque la respuesta");
-                               arregloEditNo[i].setVisibility(View.GONE);
-
-                           int finalI = i;
-
-                           arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    arregloEditSi[finalI].setVisibility(View.VISIBLE);
-                                    textView.setVisibility(View.GONE);
-                                    arregloEditNo[finalI].setVisibility(View.GONE);
-                                    respuesta(finalI);
-                                }
-                            });
+                                   arregloBtnNo[i] = new Button(getApplicationContext());
+                                   arregloBtnNo[i].setText("NO");
 
 
-
-                           arregloBtnNo[i].setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    arregloEditSi[finalI].setVisibility(View.GONE);
-                                    textView.setVisibility(View.VISIBLE);
-                                    arregloEditNo[finalI].setVisibility(View.VISIBLE);
-                                    respuesta(finalI);
-
-                                }
-                            });
+                                       arregloEditNo[i] = new EditText(getApplicationContext());
+                                       arregloEditNo[i].setTextSize(12);
+                                       arregloEditNo[i].setPadding(10,0,10,0);
+                                       LinearLayout.LayoutParams parametrosEditNo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                       parametrosEditNo.setMargins(0,10,0,0);
+                                       arregloEditNo[i].setLayoutParams(parametrosEditNo);
+                                       arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                       arregloEditNo[i].setHint("Coloque la respuesta");
+                                       arregloEditNo[i].setVisibility(View.GONE);
 
 
-                            Button boton3 = new Button(getApplicationContext());
-                            boton3.setText("N/A");
+                                   arregloBtnNA[i] = new Button(getApplicationContext());
+                                   arregloBtnNA[i].setText("N/A");
+
+                                       arregloEditNA[i] = new EditText(getApplicationContext());
+                                       arregloEditNA[i].setTextSize(12);
+                                       arregloEditNA[i].setPadding(10,0,10,0);
+                                       LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                       parametros.setMargins(0,10,0,0);
+                                       arregloEditNA[i].setLayoutParams(parametros);
+                                       arregloEditNA[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                       arregloEditNA[i].setHint("Coloque la respuesta");
+                                       arregloEditNA[i].setVisibility(View.GONE);
+
+                                   int finalI = i;
+
+                                   arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                            arregloEditNo[finalI].setVisibility(View.GONE);
+                                            textView.setVisibility(View.GONE);
+                                            arregloEditNA[finalI].setVisibility(View.GONE);
+                                            respuesta(finalI);
+                                        }
+                                    });
+
+
+                                   arregloBtnNo[i].setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            arregloEditSi[finalI].setVisibility(View.GONE);
+                                            textView.setVisibility(View.VISIBLE);
+                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
+                                            arregloEditNA[finalI].setVisibility(View.GONE);
+                                            respuesta(finalI);
+                                        }
+                                    });
+
+
+                                   arregloBtnNA[i].setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           arregloEditSi[finalI].setVisibility(View.GONE);
+                                           arregloEditNo[finalI].setVisibility(View.GONE);
+                                           textView.setVisibility(View.GONE);
+                                           arregloEditNA[finalI].setVisibility(View.VISIBLE);
+                                           respuesta(finalI);
+                                       }
+                                   });
 
 
 
-                            // Agrega los tres botones al LinearLayout hijo
-                            linearLayoutHijo.addView(arregloBtnSi[i]);
-                            linearLayoutHijo.addView(arregloEditSi[i]);
-                            linearLayoutHijo.addView(arregloBtnNo[i]);
-                            linearLayoutHijo.addView(textView);
-                            linearLayoutHijo.addView(arregloEditNo[i]);
-                            linearLayoutHijo.addView(boton3);
-
+                                    // Agrega los tres botones al LinearLayout hijo
+                                    linearLayoutHijo.addView(arregloBtnSi[i]);
+                                    linearLayoutHijo.addView(arregloEditSi[i]);
+                                    linearLayoutHijo.addView(arregloBtnNo[i]);
+                                    linearLayoutHijo.addView(textView);
+                                    linearLayoutHijo.addView(arregloEditNo[i]);
+                                    linearLayoutHijo.addView(arregloBtnNA[i]);
+                                    linearLayoutHijo.addView(arregloEditNA[i]);
+                                    //linearLayoutHijo.addView(boton3);
 
                         } else if(tipo_boton.equals("Si y No")){
-                            Button boton1 = new Button(getApplicationContext());
-                            boton1.setText("SI");
 
-                            Button boton2 = new Button(getApplicationContext());
-                            boton2.setText("NO");
+                                   arregloBtnSi[i] = new Button(getApplicationContext());
+                                   arregloBtnSi[i].setText("SI");
 
-                            TextView textView = new TextView(getApplicationContext());
-                            textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+                                   arregloEditSi[i] = new EditText(getApplicationContext());
+                                   arregloEditSi[i].setTextSize(12);
+                                   arregloEditSi[i].setPadding(10,0,10,0);
+                                   LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                   parametrosEditSi.setMargins(0,10,0,0);
+                                   arregloEditSi[i].setLayoutParams(parametrosEditSi);
+                                   arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                   arregloEditSi[i].setHint("Coloque la respuesta");
+                                   arregloEditSi[i].setVisibility(View.GONE);
 
-                            linearLayoutHijo.addView(boton1);
-                            linearLayoutHijo.addView(boton2);
-                            linearLayoutHijo.addView(textView);
+
+                                   TextView textView = new TextView(getApplicationContext());
+                                   textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+                                   textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                                   textView.setPadding(20,0,0,0);
+                                   textView.setVisibility(View.GONE);
+
+
+                                   arregloBtnNo[i] = new Button(getApplicationContext());
+                                   arregloBtnNo[i].setText("NO");
+
+
+                                   arregloEditNo[i] = new EditText(getApplicationContext());
+                                   arregloEditNo[i].setTextSize(12);
+                                   arregloEditNo[i].setPadding(10,0,10,0);
+                                   LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                   parametros.setMargins(0,10,0,0);
+                                   arregloEditNo[i].setLayoutParams(parametros);
+                                   arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                   arregloEditNo[i].setHint("Coloque la respuesta");
+                                   arregloEditNo[i].setVisibility(View.GONE);
+
+                                   int finalI = i;
+
+                                   arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                           textView.setVisibility(View.GONE);
+                                           arregloEditNo[finalI].setVisibility(View.GONE);
+                                           respuesta(finalI);
+                                       }
+                                   });
+
+                                   arregloBtnNo[i].setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           arregloEditSi[finalI].setVisibility(View.GONE);
+                                           textView.setVisibility(View.VISIBLE);
+                                           arregloEditNo[finalI].setVisibility(View.VISIBLE);
+                                           respuesta(finalI);
+                                       }
+                                   });
+
+                                   linearLayoutHijo.addView(arregloBtnSi[i]);
+                                   linearLayoutHijo.addView(arregloEditSi[i]);
+                                   linearLayoutHijo.addView(arregloBtnNo[i]);
+                                   linearLayoutHijo.addView(textView);
+                                   linearLayoutHijo.addView(arregloEditNo[i]);
+
 
                         }else if(tipo_boton.equals("Pregunta abierta")){
-                            EditText edit = new EditText(getApplicationContext());
-                            linearLayoutHijo.addView(edit);
+                            editPreguntaAbierta[i] = new EditText(getApplicationContext());
+                            linearLayoutHijo.addView(editPreguntaAbierta[i]);
                         }
 
                         // Agregamos el LinearLayout hijo al LinearLayout padre
@@ -217,13 +337,6 @@ public class Auditando extends AppCompatActivity {
                         separador.setLayoutParams(new LinearLayout.LayoutParams(5, LinearLayout.LayoutParams.MATCH_PARENT));
                         linearLayoutPadre.addView(separador);
                         linearLayoutPadre.addView(linearLayoutHijo);
-
-
-
-
-
-
-
 
                     }
 
