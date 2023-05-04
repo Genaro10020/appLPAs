@@ -76,7 +76,7 @@ public class Auditorias extends AppCompatActivity {
         String url = "https://vvnorth.com/lpa/app/consultarAuditorias.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
-                    Log.e("Auditoria", "" + response);
+                    //Log.e("Auditoria", "" + response);
                     try {
                         JSONArray auditoriasArreglo = new JSONArray(response); //arreglo
 
@@ -144,7 +144,7 @@ public class Auditorias extends AppCompatActivity {
                                         button.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Log.e("","Precionaste"+id_proceso);
+                                               // Log.e("","Precionaste"+id_proceso);
                                                 enviarAuditando(id_proceso);
                                             }
                                         });
