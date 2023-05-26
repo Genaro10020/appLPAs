@@ -50,6 +50,7 @@ public class Auditando extends AppCompatActivity {
     Object[] recopilandoRespuestas;
     String contesto;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +73,8 @@ public class Auditando extends AppCompatActivity {
         Button btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
+        cantidad_preguntas = arrayPreguntas.length();
+        recopilandoRespuestas = new Object[cantidad_preguntas];
 
                 btnGuardar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -81,11 +84,9 @@ public class Auditando extends AppCompatActivity {
                             String respuesta;
                         }
 
-                        cantidad_preguntas = arrayPreguntas.length();
-                        recopilandoRespuestas = new Object[cantidad_preguntas];
 
-                        // Crear una lista para almacenar las respuestas de las preguntas
-                        /*List<ObjetoRespuesta> respuestasPreguntas = new ArrayList<>();*/
+
+                        ObjetoRespuesta[] recopilandoRespuestas = new ObjetoRespuesta[arrayPreguntas.length()];
 
                         for (int i =0; i < arrayPreguntas.length(); i++) {
                                 try {
@@ -124,18 +125,24 @@ public class Auditando extends AppCompatActivity {
                                         }
 
                                     // Crear un objeto Pregunta con el tipo de botón y la respuesta, y agregarlo a la lista
-                                    ObjetoRespuesta ObjRespuesta = new ObjetoRespuesta();
-                                    ObjRespuesta.pregunta = pregunta_guardar;
-                                    ObjRespuesta.respuesta = contesto;
-                                    recopilandoRespuestas[i]= ObjRespuesta;
+
+                                    ObjetoRespuesta objRespuesta = new ObjetoRespuesta();
+                                    objRespuesta.pregunta = pregunta_guardar;
+                                    objRespuesta.respuesta = contesto;
+                                    recopilandoRespuestas[i] = objRespuesta;
                                     Log.e("resultado",":"+recopilandoRespuestas[i]);
                                     //respuestasPreguntas.add(ObjRespuesta);
                                     //Log.e("Lista preguntas",":"+respuestasPreguntas);
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                    guardarRespuestas(i);
+
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                         }
+
+
                         // para imprimir y verlo correctamente en consola.
                        /* for (ObjetoRespuesta respuesta : respuestasPreguntas) {
                             Log.e("Pregunta", respuesta.pregunta);
@@ -143,6 +150,34 @@ public class Auditando extends AppCompatActivity {
                         }*/
                     }
                 });
+    }
+
+
+    private void guardarRespuestas(int index){
+        String url = "https://vvnorth.com/lpa/app/guardandoRespuestas.php";
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Maneja la respuesta del servidor si es necesario
+                        Log.e("DESDE guardandoPHP", response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Maneja el error de la solicitud si es necesario
+                        Log.e("error_php", error.toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                HashMap<String, String> params = new HashMap<>();
+               // params.put("pregunta", recopilandoRespuestas[index].pregunta);
+               // params.put("respuesta", recopilandoRespuestas[index].respuesta);
+                return params;
+            }
+        };
     }
 
 
