@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +36,11 @@ import java.util.Map;
 
 public class Auditando extends AppCompatActivity {
     JSONArray arrayPreguntas;
-    int cantidad_preguntas;
+    int cantidad_preguntas=0;
 
 
     String id_proceso;
+    String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
     Button[] arregloBtnNA;
@@ -47,8 +49,9 @@ public class Auditando extends AppCompatActivity {
     EditText[] arregloEditNA;
     EditText[] editPreguntaAbierta;
 
-    Object[] recopilandoRespuestas;
+    ObjetoRespuesta[] recopilandoRespuestas;
     String contesto;
+    RequestQueue queue;
 
 
     @Override
@@ -73,22 +76,17 @@ public class Auditando extends AppCompatActivity {
         Button btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
-        cantidad_preguntas = arrayPreguntas.length();
-        recopilandoRespuestas = new Object[cantidad_preguntas];
+        queue = Volley.newRequestQueue(getApplicationContext());
 
-                btnGuardar.setOnClickListener(new View.OnClickListener() {
+
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        class ObjetoRespuesta {
-                            String pregunta;
-                            String respuesta;
-                        }
 
 
-
-                        ObjetoRespuesta[] recopilandoRespuestas = new ObjetoRespuesta[arrayPreguntas.length()];
-
-                        for (int i =0; i < arrayPreguntas.length(); i++) {
+                    int sumaVacias =0;
+                        for (int i =0; i < cantidad_preguntas; i++) {
                                 try {
                                     JSONObject preguntas = arrayPreguntas.getJSONObject(i);
                                     String tipo_boton = preguntas.getString("tipo_boton");
@@ -104,6 +102,7 @@ public class Auditando extends AppCompatActivity {
                                                 contesto = arregloEditNA[i].getText().toString();
                                             }else{
                                                 contesto="";
+                                                sumaVacias++;
                                                 //Log.e("Si No y Na", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
                                             }
                                         }else if(tipo_boton.equals("Si y No")){
@@ -113,6 +112,7 @@ public class Auditando extends AppCompatActivity {
                                                 contesto = arregloEditNo[i].getText().toString();
                                             }else{
                                                 contesto="";
+                                                sumaVacias++;
                                                 //Log.e("Si y No", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
                                             }
                                         }else if(tipo_boton.equals("Pregunta abierta")){
@@ -120,6 +120,7 @@ public class Auditando extends AppCompatActivity {
                                                 contesto = editPreguntaAbierta[i].getText().toString();
                                             }else{
                                                 contesto="";
+                                                sumaVacias++;
                                                // Log.e("Pregunta abierta", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
                                             }
                                         }
@@ -130,16 +131,25 @@ public class Auditando extends AppCompatActivity {
                                     objRespuesta.pregunta = pregunta_guardar;
                                     objRespuesta.respuesta = contesto;
                                     recopilandoRespuestas[i] = objRespuesta;
-                                    Log.e("resultado",":"+recopilandoRespuestas[i]);
+                                    //Log.e("resultado",":"+recopilandoRespuestas[i]);
                                     //respuestasPreguntas.add(ObjRespuesta);
                                     //Log.e("Lista preguntas",":"+respuestasPreguntas);
 
-                                    guardarRespuestas(i);
+
 
 
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
+                        }
+
+                        if (sumaVacias==0){
+                            for (int i =0; i < cantidad_preguntas; i++) {
+                                guardarRespuestas(i);
+                            }
+                        }else{
+                            Toast toas = Toast.makeText(getApplicationContext(),"Conteste todas las preguntas",Toast.LENGTH_LONG);
+                            toas.show();
                         }
 
 
@@ -151,6 +161,13 @@ public class Auditando extends AppCompatActivity {
                     }
                 });
     }
+
+    class ObjetoRespuesta {
+        String pregunta;
+        String respuesta;
+    }
+
+
 
 
     private void guardarRespuestas(int index){
@@ -173,12 +190,16 @@ public class Auditando extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
-               // params.put("pregunta", recopilandoRespuestas[index].pregunta);
-               // params.put("respuesta", recopilandoRespuestas[index].respuesta);
+                params.put("pregunta", recopilandoRespuestas[index].pregunta);
+                params.put("respuesta", recopilandoRespuestas[index].respuesta);
+                params.put("contable",contableSINO[index]);
                 return params;
             }
         };
+        queue.add(request);
     }
+
+
 
 
     private void consultarPreguntas(){
@@ -192,7 +213,8 @@ public class Auditando extends AppCompatActivity {
                     arrayPreguntas = new JSONArray(response);
 
                     cantidad_preguntas = arrayPreguntas.length();
-
+                    recopilandoRespuestas = new ObjetoRespuesta[cantidad_preguntas];// este arreglo de objetos lo utililizare para guardar las preguntas, al presinar el bóton Guardar.
+                    contableSINO = new String[cantidad_preguntas];
                     arregloBtnSi = new Button[cantidad_preguntas];
                     arregloBtnNo = new Button[cantidad_preguntas];
                     arregloBtnNA = new Button[cantidad_preguntas];
@@ -208,6 +230,10 @@ public class Auditando extends AppCompatActivity {
 
                         String pregunta =jsonObjectPreguntas.getString("pregunta");
                         String tipo_boton =jsonObjectPreguntas.getString("tipo_boton");
+                        String contable = jsonObjectPreguntas.getString("contable");
+
+
+                        contableSINO[i] = contable;
 
                         LinearLayout linearLayoutPadre = findViewById(R.id.layout_padre);
                         linearLayoutPadre.setPadding(10,10,10,0);
@@ -380,6 +406,7 @@ public class Auditando extends AppCompatActivity {
                                    arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View v) {
+                                           arregloEditNo[finalI].setText("");
                                            arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                            textView.setVisibility(View.GONE);
                                            arregloEditNo[finalI].setVisibility(View.GONE);
@@ -390,6 +417,7 @@ public class Auditando extends AppCompatActivity {
                                    arregloBtnNo[i].setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View v) {
+                                           arregloEditSi[finalI].setText("");
                                            arregloEditSi[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.VISIBLE);
                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
