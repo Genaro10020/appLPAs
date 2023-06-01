@@ -39,7 +39,7 @@ public class Auditando extends AppCompatActivity {
     int cantidad_preguntas=0;
 
 
-    String id_proceso;
+    String id_proceso,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -61,9 +61,16 @@ public class Auditando extends AppCompatActivity {
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
 
         Intent intent = getIntent();
+        Nombre_Auditor = intent.getStringExtra("NOMBRE_AUDITOR");
         id_proceso = intent.getStringExtra("ID_PROCESO");
+        Titulo = intent.getStringExtra("TITULO");
+        Proceso = intent.getStringExtra("PROCESO");
+        Responsable = intent.getStringExtra("RESPONSABLE");
+        Fecha_Programada = intent.getStringExtra("FECHA_PROGRAMADA");
+        Descripcion = intent.getStringExtra("DESCRIPCION");
 
-        //Log.e("","ID_PROCESO"+id_proceso);
+
+
 
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
         layoutBtnDos.setVisibility(View.GONE);
@@ -145,7 +152,19 @@ public class Auditando extends AppCompatActivity {
 
                         if (sumaVacias==0){
                             for (int i =0; i < cantidad_preguntas; i++) {
-                                guardarRespuestas(i);
+                                JSONObject preguntas = null;
+                                String tipo_boton = "";
+                                        try {
+                                            preguntas = arrayPreguntas.getJSONObject(i);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            tipo_boton = preguntas.getString("tipo_boton");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                guardarRespuestas(i,tipo_boton);
                             }
                         }else{
                             Toast toas = Toast.makeText(getApplicationContext(),"Conteste todas las preguntas",Toast.LENGTH_LONG);
@@ -170,7 +189,7 @@ public class Auditando extends AppCompatActivity {
 
 
 
-    private void guardarRespuestas(int index){
+    private void guardarRespuestas(int index, String tipo_boton){
         String url = "https://vvnorth.com/lpa/app/guardandoRespuestas.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -190,9 +209,18 @@ public class Auditando extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
+                params.put("titulo",Titulo);
+                params.put("proceso",Proceso);
+                params.put("auditor",Nombre_Auditor);
+                params.put("responsable",Responsable);
+                params.put("descripcion",Descripcion);
+                params.put("fecha_programada",Fecha_Programada);
+
                 params.put("pregunta", recopilandoRespuestas[index].pregunta);
                 params.put("respuesta", recopilandoRespuestas[index].respuesta);
                 params.put("contable",contableSINO[index]);
+
+                params.put("btn_tipo",tipo_boton);
                 return params;
             }
         };

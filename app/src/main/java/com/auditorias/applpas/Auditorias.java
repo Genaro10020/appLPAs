@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -86,6 +87,13 @@ public class Auditorias extends AppCompatActivity {
                                         // posicion de arreglo en objeto para extraer
                                         JSONObject jsonObjectAuditoria = auditoriasArreglo.getJSONObject(i);
                                         String id_proceso = jsonObjectAuditoria.getString("id_proceso");
+                                        String titulo = jsonObjectAuditoria.getString("titulo");
+                                        String proceso = jsonObjectAuditoria.getString("proceso");
+                                        String responsable = jsonObjectAuditoria.getString("responsable");
+                                        String fecha_programada = jsonObjectAuditoria.getString("fecha");
+                                        String descripcion = jsonObjectAuditoria.getString("descripcion");
+
+
 
                                         // Obtenemos el LinearLayout padre
                                         LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
@@ -145,7 +153,7 @@ public class Auditorias extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                // Log.e("","Precionaste"+id_proceso);
-                                                enviarAuditando(id_proceso);
+                                                enviarAuditando(id_proceso,titulo,proceso,responsable,fecha_programada,descripcion);
                                             }
                                         });
 
@@ -194,9 +202,15 @@ public class Auditorias extends AppCompatActivity {
     }
 
 
-   private void enviarAuditando(String id_proceso){
+   private void enviarAuditando(String id_proceso, String titulo, String proceso,String responsable, String fecha_programada, String descripcion){
         Intent intent = new Intent(Auditorias.this, Auditando.class);
+        intent.putExtra("NOMBRE_AUDITOR",nombre);
         intent.putExtra("ID_PROCESO",id_proceso);
+        intent.putExtra("TITULO",titulo);
+        intent.putExtra("PROCESO",proceso);
+        intent.putExtra("RESPONSABLE",responsable);
+        intent.putExtra("FECHA_PROGRAMADA",fecha_programada);
+        intent.putExtra("DESCRIPCION",descripcion);
         startActivity(intent);
    }
 }
