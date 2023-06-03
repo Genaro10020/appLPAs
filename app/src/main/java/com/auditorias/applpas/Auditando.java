@@ -1,8 +1,11 @@
 package com.auditorias.applpas;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
@@ -33,13 +36,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Auditando extends AppCompatActivity {
     JSONArray arrayPreguntas;
     int cantidad_preguntas=0;
 
-
-    String id_proceso,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
+    TextView textUno;
+    String  ComprobarSeExisteAuditoria,id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -48,10 +52,12 @@ public class Auditando extends AppCompatActivity {
     EditText[] arregloEditNo;
     EditText[] arregloEditNA;
     EditText[] editPreguntaAbierta;
+    String[] arregloBtnSeleccionado;
 
     ObjetoRespuesta[] recopilandoRespuestas;
     String contesto;
     RequestQueue queue;
+    Button btnGuardar;
 
 
     @Override
@@ -63,24 +69,25 @@ public class Auditando extends AppCompatActivity {
         Intent intent = getIntent();
         Nombre_Auditor = intent.getStringExtra("NOMBRE_AUDITOR");
         id_proceso = intent.getStringExtra("ID_PROCESO");
+        Codigo = intent.getStringExtra("CODIGO");
         Titulo = intent.getStringExtra("TITULO");
         Proceso = intent.getStringExtra("PROCESO");
         Responsable = intent.getStringExtra("RESPONSABLE");
         Fecha_Programada = intent.getStringExtra("FECHA_PROGRAMADA");
         Descripcion = intent.getStringExtra("DESCRIPCION");
 
-
+        ;
 
 
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
         layoutBtnDos.setVisibility(View.GONE);
-        TextView textUno = (TextView)findViewById(R.id.textView1);
+        textUno = (TextView)findViewById(R.id.textView1);
         textUno.setText("Guardar");
         titulo.setText("Auditando");
 
                 consultarPreguntas();
 
-        Button btnGuardar = (Button)findViewById(R.id.btnHistorial);
+        btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
         queue = Volley.newRequestQueue(getApplicationContext());
@@ -91,92 +98,92 @@ public class Auditando extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        if (verificarConexionInternet()) {
 
-                    int sumaVacias =0;
-                        for (int i =0; i < cantidad_preguntas; i++) {
-                                try {
-                                    JSONObject preguntas = arrayPreguntas.getJSONObject(i);
-                                    String tipo_boton = preguntas.getString("tipo_boton");
-                                    String pregunta_guardar = preguntas.getString("pregunta");
+                            btnGuardar.setVisibility(View.GONE);
+                            textUno.setText("Guardadndo Auditoria.....espere");
+                                    int sumaVacias =0;
+                                    for (int i =0; i < cantidad_preguntas; i++) {
+                                            try {
+                                                JSONObject preguntas = arrayPreguntas.getJSONObject(i);
+                                                String tipo_boton = preguntas.getString("tipo_boton");
+                                                String pregunta_guardar = preguntas.getString("pregunta");
+
+                                                    if (tipo_boton.equals("Si No y Na")) {
+                                                        if(!arregloEditSi[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditSi[i].getText().toString();
+                                                        }else if(!arregloEditNo[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditNo[i].getText().toString();
+                                                        }else if(!arregloEditNA[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditNA[i].getText().toString();
+                                                        }else{
+                                                            contesto="";
+                                                            sumaVacias++;
+                                                            //Log.e("Si No y Na", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
+                                                        }
+                                                    }else if(tipo_boton.equals("Si y No")){
+                                                        if(!arregloEditSi[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditSi[i].getText().toString();
+                                                        }else if(!arregloEditNo[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditNo[i].getText().toString();
+                                                        }else{
+                                                            contesto="";
+                                                            sumaVacias++;
+                                                            //Log.e("Si y No", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
+                                                        }
+                                                    }else if(tipo_boton.equals("Pregunta abierta")){
+                                                        if(!editPreguntaAbierta[i].getText().toString().isEmpty()){
+                                                            contesto = editPreguntaAbierta[i].getText().toString();
+                                                        }else{
+                                                            contesto="";
+                                                            sumaVacias++;
+                                                           // Log.e("Pregunta abierta", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
+                                                        }
+                                                    }
+
+                                                // Crear un objeto Pregunta con el tipo de botón y la respuesta, y agregarlo a la lista
+
+                                                ObjetoRespuesta objRespuesta = new ObjetoRespuesta();
+                                                objRespuesta.pregunta = pregunta_guardar;
+                                                objRespuesta.respuesta = contesto;
+                                                recopilandoRespuestas[i] = objRespuesta;
+                                                //Log.e("resultado",":"+recopilandoRespuestas[i]);
+                                                //respuestasPreguntas.add(ObjRespuesta);
+                                                //Log.e("Lista preguntas",":"+respuestasPreguntas);
 
 
-                                        if (tipo_boton.equals("Si No y Na")) {
-                                            if(!arregloEditSi[i].getText().toString().isEmpty()){
-                                                contesto = arregloEditSi[i].getText().toString();
-                                            }else if(!arregloEditNo[i].getText().toString().isEmpty()){
-                                                contesto = arregloEditNo[i].getText().toString();
-                                            }else if(!arregloEditNA[i].getText().toString().isEmpty()){
-                                                contesto = arregloEditNA[i].getText().toString();
-                                            }else{
-                                                contesto="";
-                                                sumaVacias++;
-                                                //Log.e("Si No y Na", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
-                                            }
-                                        }else if(tipo_boton.equals("Si y No")){
-                                            if(!arregloEditSi[i].getText().toString().isEmpty()){
-                                                contesto = arregloEditSi[i].getText().toString();
-                                            }else if(!arregloEditNo[i].getText().toString().isEmpty()){
-                                                contesto = arregloEditNo[i].getText().toString();
-                                            }else{
-                                                contesto="";
-                                                sumaVacias++;
-                                                //Log.e("Si y No", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
-                                            }
-                                        }else if(tipo_boton.equals("Pregunta abierta")){
-                                            if(!editPreguntaAbierta[i].getText().toString().isEmpty()){
-                                                contesto = editPreguntaAbierta[i].getText().toString();
-                                            }else{
-                                                contesto="";
-                                                sumaVacias++;
-                                               // Log.e("Pregunta abierta", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
-                                            }
+
+
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                    }
+
+                                    if (sumaVacias==0){
+                                        for (int i =0; i < cantidad_preguntas; i++) {
+                                            JSONObject preguntas = null;
+                                            String tipo_boton = "";
+                                                    try {
+                                                        preguntas = arrayPreguntas.getJSONObject(i);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    try {
+                                                        tipo_boton = preguntas.getString("tipo_boton");
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                            guardarRespuestas(i,tipo_boton);
                                         }
-
-                                    // Crear un objeto Pregunta con el tipo de botón y la respuesta, y agregarlo a la lista
-
-                                    ObjetoRespuesta objRespuesta = new ObjetoRespuesta();
-                                    objRespuesta.pregunta = pregunta_guardar;
-                                    objRespuesta.respuesta = contesto;
-                                    recopilandoRespuestas[i] = objRespuesta;
-                                    //Log.e("resultado",":"+recopilandoRespuestas[i]);
-                                    //respuestasPreguntas.add(ObjRespuesta);
-                                    //Log.e("Lista preguntas",":"+respuestasPreguntas);
-
-
-
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                        }
-
-                        if (sumaVacias==0){
-                            for (int i =0; i < cantidad_preguntas; i++) {
-                                JSONObject preguntas = null;
-                                String tipo_boton = "";
-                                        try {
-                                            preguntas = arrayPreguntas.getJSONObject(i);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                        try {
-                                            tipo_boton = preguntas.getString("tipo_boton");
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                guardarRespuestas(i,tipo_boton);
-                            }
-                        }else{
-                            Toast toas = Toast.makeText(getApplicationContext(),"Conteste todas las preguntas",Toast.LENGTH_LONG);
+                                    }else{
+                                        Toast toas = Toast.makeText(getApplicationContext(),"Conteste todas las preguntas",Toast.LENGTH_LONG);
+                                        toas.show();
+                                    }
+                        } else {
+                            Toast toas = Toast.makeText(getApplicationContext(),"No hay internet, verifica.",Toast.LENGTH_LONG);
                             toas.show();
                         }
-
-
-                        // para imprimir y verlo correctamente en consola.
-                       /* for (ObjetoRespuesta respuesta : respuestasPreguntas) {
-                            Log.e("Pregunta", respuesta.pregunta);
-                            Log.e("Respuesta", respuesta.respuesta);
-                        }*/
                     }
                 });
     }
@@ -187,28 +194,47 @@ public class Auditando extends AppCompatActivity {
     }
 
 
+    private boolean verificarConexionInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
+    }
 
 
     private void guardarRespuestas(int index, String tipo_boton){
-        String url = "https://vvnorth.com/lpa/app/guardandoRespuestas.php";
+        String url = "https://vvnorth.com/lpa/app/guardandoAuditoria.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Maneja la respuesta del servidor si es necesario
                         Log.e("DESDE guardandoPHP", response);
+                        if (response.equals("Gudardado Completo")){
+                            Log.e("GUARDADO", "EXITOSO");
+                        }else{
+                            btnGuardar.setVisibility(View.VISIBLE);
+                            textUno.setText("Guardar");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        btnGuardar.setVisibility(View.VISIBLE);
+                        textUno.setText("Guardar");
                         // Maneja el error de la solicitud si es necesario
                         Log.e("error_php", error.toString());
+                        Toast toast = Toast.makeText(getApplicationContext(),"Internet no estable, Guarde Nuevamente.",Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
+                params.put("total_preguntas", String.valueOf(cantidad_preguntas));
+                params.put("codigo",Codigo);
                 params.put("titulo",Titulo);
                 params.put("proceso",Proceso);
                 params.put("auditor",Nombre_Auditor);
@@ -216,11 +242,14 @@ public class Auditando extends AppCompatActivity {
                 params.put("descripcion",Descripcion);
                 params.put("fecha_programada",Fecha_Programada);
 
+                params.put("num_pregunta", String.valueOf(index+1));
                 params.put("pregunta", recopilandoRespuestas[index].pregunta);
                 params.put("respuesta", recopilandoRespuestas[index].respuesta);
                 params.put("contable",contableSINO[index]);
 
                 params.put("btn_tipo",tipo_boton);
+                params.put("btn_seleccionado",arregloBtnSeleccionado[index]);
+
                 return params;
             }
         };
@@ -250,6 +279,7 @@ public class Auditando extends AppCompatActivity {
                     arregloEditNo = new EditText[cantidad_preguntas];
                     arregloEditNA = new EditText[cantidad_preguntas];
                     editPreguntaAbierta = new EditText[cantidad_preguntas];
+                    arregloBtnSeleccionado = new String[cantidad_preguntas];
 
 
                    // Log.e("Largo del los arreglos","Cantidad"+cantidad_preguntas);
@@ -342,13 +372,15 @@ public class Auditando extends AppCompatActivity {
                                    arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
+
                                             arregloEditNo[finalI].setText("");
                                             arregloEditNA[finalI].setText("");
                                             arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                             arregloEditNo[finalI].setVisibility(View.GONE);
                                             textView.setVisibility(View.GONE);
                                             arregloEditNA[finalI].setVisibility(View.GONE);
-                                            respuesta(finalI);
+                                            arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
+                                            //respuesta(finalI);
                                         }
                                     });
 
@@ -362,7 +394,8 @@ public class Auditando extends AppCompatActivity {
                                             textView.setVisibility(View.VISIBLE);
                                             arregloEditNA[finalI].setVisibility(View.GONE);
                                             arregloEditNo[finalI].setVisibility(View.VISIBLE);
-                                            respuesta(finalI);
+                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
+                                            //respuesta(finalI);
                                         }
                                     });
 
@@ -376,7 +409,8 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.GONE);
                                            arregloEditNA[finalI].setVisibility(View.VISIBLE);
-                                           respuesta(finalI);
+                                           arregloBtnSeleccionado[finalI] = arregloBtnNA[finalI].getText().toString();
+                                           //respuesta(finalI);
                                        }
                                    });
 
@@ -438,7 +472,8 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                            textView.setVisibility(View.GONE);
                                            arregloEditNo[finalI].setVisibility(View.GONE);
-                                           respuesta(finalI);
+                                           arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
+                                           //respuesta(finalI);
                                        }
                                    });
 
@@ -449,7 +484,8 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditSi[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.VISIBLE);
                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
-                                           respuesta(finalI);
+                                           arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
+                                           //respuesta(finalI);
                                        }
                                    });
 
@@ -461,6 +497,7 @@ public class Auditando extends AppCompatActivity {
 
 
                         }else if(tipo_boton.equals("Pregunta abierta")){
+                           arregloBtnSeleccionado[i] = tipo_boton;
                             editPreguntaAbierta[i] = new EditText(getApplicationContext());
                             linearLayoutHijo.addView(editPreguntaAbierta[i]);
                         }

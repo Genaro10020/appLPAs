@@ -87,6 +87,7 @@ public class Auditorias extends AppCompatActivity {
                                         // posicion de arreglo en objeto para extraer
                                         JSONObject jsonObjectAuditoria = auditoriasArreglo.getJSONObject(i);
                                         String id_proceso = jsonObjectAuditoria.getString("id_proceso");
+                                        String codigo = jsonObjectAuditoria.getString("codigo");
                                         String titulo = jsonObjectAuditoria.getString("titulo");
                                         String proceso = jsonObjectAuditoria.getString("proceso");
                                         String responsable = jsonObjectAuditoria.getString("responsable");
@@ -123,7 +124,7 @@ public class Auditorias extends AppCompatActivity {
                                                 textView.setText(Html.fromHtml("<b>Descripción:</b>" + jsonObjectAuditoria.getString("descripcion")));
                                             } else if (j + 1 == 6) {
                                                 textView.setPadding(20, 0, 0, 20);
-                                                textView.setText(Html.fromHtml("<b>Estatus:</b>" + "PENDIENTE"));
+                                                textView.setText(Html.fromHtml("<b>Código:</b>" + codigo));
                                             }
 
                                             linearLayoutHijo.addView(textView);
@@ -153,7 +154,7 @@ public class Auditorias extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                // Log.e("","Precionaste"+id_proceso);
-                                                enviarAuditando(id_proceso,titulo,proceso,responsable,fecha_programada,descripcion);
+                                                enviarAuditando(id_proceso,codigo,titulo,proceso,responsable,fecha_programada,descripcion);
                                             }
                                         });
 
@@ -202,9 +203,10 @@ public class Auditorias extends AppCompatActivity {
     }
 
 
-   private void enviarAuditando(String id_proceso, String titulo, String proceso,String responsable, String fecha_programada, String descripcion){
+   private void enviarAuditando(String id_proceso,String codigo ,String titulo, String proceso,String responsable, String fecha_programada, String descripcion){
         Intent intent = new Intent(Auditorias.this, Auditando.class);
         intent.putExtra("NOMBRE_AUDITOR",nombre);
+        intent.putExtra("CODIGO",codigo);
         intent.putExtra("ID_PROCESO",id_proceso);
         intent.putExtra("TITULO",titulo);
         intent.putExtra("PROCESO",proceso);
