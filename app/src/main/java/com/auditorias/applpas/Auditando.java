@@ -99,9 +99,6 @@ public class Auditando extends AppCompatActivity {
                     public void onClick(View v) {
 
                         if (verificarConexionInternet()) {
-
-                            btnGuardar.setVisibility(View.GONE);
-                            textUno.setText("Guardadndo Auditoria.....espere");
                                     int sumaVacias =0;
                                     for (int i =0; i < cantidad_preguntas; i++) {
                                             try {
@@ -160,22 +157,23 @@ public class Auditando extends AppCompatActivity {
                                     }
 
                                     if (sumaVacias==0){
-                                        for (int i =0; i < cantidad_preguntas; i++) {
-                                            JSONObject preguntas = null;
-                                            String tipo_boton = "";
-                                                    try {
-                                                        preguntas = arrayPreguntas.getJSONObject(i);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    try {
-                                                        tipo_boton = preguntas.getString("tipo_boton");
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                            guardarRespuestas(i,tipo_boton);
-                                        }
+                                        btnGuardar.setVisibility(View.GONE);
+                                        textUno.setText("Guardando Auditoria.....espere");
+                                            for (int i =0; i < cantidad_preguntas; i++) {
+                                                JSONObject preguntas = null;
+                                                String tipo_boton = "";
+                                                        try {
+                                                            preguntas = arrayPreguntas.getJSONObject(i);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        try {
+                                                            tipo_boton = preguntas.getString("tipo_boton");
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                                guardarRespuestas(i,tipo_boton);
+                                            }
                                     }else{
                                         Toast toas = Toast.makeText(getApplicationContext(),"Conteste todas las preguntas",Toast.LENGTH_LONG);
                                         toas.show();
@@ -210,13 +208,27 @@ public class Auditando extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Maneja la respuesta del servidor si es necesario
-                        Log.e("DESDE guardandoPHP", response);
-                        if (response.equals("Gudardado Completo")){
-                            Log.e("GUARDADO", "EXITOSO");
-                        }else{
+
+                        try {
+                            JSONObject jsonObject  = new JSONObject(response);
+                            String mensaje = jsonObject.getString("mensaje");
+                            Log.e("DESDE guardandoPHP", response);
+
+                            if (mensaje.equals("Guardado Completo")){
+                                btnGuardar.setVisibility(View.VISIBLE);
+                                textUno.setText("Guardar");
+                                Intent intent = new Intent (getApplicationContext(), ResultadoAuditoria.class);
+                                intent.putExtra("CODIGO",Codigo);
+                                startActivity(intent);
+                            }
+
+                        } catch (JSONException e) {
                             btnGuardar.setVisibility(View.VISIBLE);
                             textUno.setText("Guardar");
+                            e.printStackTrace();
                         }
+
+
                     }
                 },
                 new Response.ErrorListener() {
