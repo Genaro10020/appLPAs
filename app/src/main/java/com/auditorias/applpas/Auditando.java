@@ -41,9 +41,10 @@ import java.util.Random;
 public class Auditando extends AppCompatActivity {
     JSONArray arrayPreguntas;
     int cantidad_preguntas=0;
+     double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String  ComprobarSeExisteAuditoria,id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
+    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -58,6 +59,7 @@ public class Auditando extends AppCompatActivity {
     String contesto;
     RequestQueue queue;
     Button btnGuardar;
+
 
 
     @Override
@@ -97,7 +99,10 @@ public class Auditando extends AppCompatActivity {
         btnGuardar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        int CantidadPreguntasContables=0;
+                        int CantidadRespuestasSI=0;
+                        int CantidadRespuestasNO=0;
+                        int CantidadRespuestasNA=0;
                         if (verificarConexionInternet()) {
                                     int sumaVacias =0;
                                     for (int i =0; i < cantidad_preguntas; i++) {
@@ -106,22 +111,40 @@ public class Auditando extends AppCompatActivity {
                                                 String tipo_boton = preguntas.getString("tipo_boton");
                                                 String pregunta_guardar = preguntas.getString("pregunta");
 
+
+
+
                                                     if (tipo_boton.equals("Si No y Na")) {
+
+                                                        if(contableSINO[i].equals("Si")){//Contabilizo cantidad preguntas contables
+                                                            CantidadPreguntasContables++;
+                                                        }
+
                                                         if(!arregloEditSi[i].getText().toString().isEmpty()){
+                                                            CantidadRespuestasSI++;
                                                             contesto = arregloEditSi[i].getText().toString();
                                                         }else if(!arregloEditNo[i].getText().toString().isEmpty()){
+                                                            CantidadRespuestasNO++;
                                                             contesto = arregloEditNo[i].getText().toString();
                                                         }else if(!arregloEditNA[i].getText().toString().isEmpty()){
                                                             contesto = arregloEditNA[i].getText().toString();
+                                                            CantidadRespuestasNA++;
                                                         }else{
                                                             contesto="";
                                                             sumaVacias++;
                                                             //Log.e("Si No y Na", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
                                                         }
                                                     }else if(tipo_boton.equals("Si y No")){
+
+                                                        if(contableSINO[i].equals("Si")){//Contabilizo cantidad preguntas contables
+                                                            CantidadPreguntasContables++;
+                                                        }
+
                                                         if(!arregloEditSi[i].getText().toString().isEmpty()){
+                                                            CantidadRespuestasSI++;
                                                             contesto = arregloEditSi[i].getText().toString();
                                                         }else if(!arregloEditNo[i].getText().toString().isEmpty()){
+                                                            CantidadRespuestasNO++;
                                                             contesto = arregloEditNo[i].getText().toString();
                                                         }else{
                                                             contesto="";
@@ -156,7 +179,15 @@ public class Auditando extends AppCompatActivity {
                                                         }
                                     }
 
+
                                     if (sumaVacias==0){
+
+                                       int SumaContables = CantidadPreguntasContables-CantidadRespuestasNA;
+                                       CalificacionFinal = ((double) CantidadRespuestasSI * 100) / (double) SumaContables;
+
+                                       //Log.e("Calificacion",":"+CalificacionFinal+"Contable"+CantidadPreguntasContables);
+
+
                                         btnGuardar.setVisibility(View.GONE);
                                         textUno.setText("Guardando Auditoria.....espere");
                                             for (int i =0; i < cantidad_preguntas; i++) {
@@ -261,6 +292,7 @@ public class Auditando extends AppCompatActivity {
 
                 params.put("btn_tipo",tipo_boton);
                 params.put("btn_seleccionado",arregloBtnSeleccionado[index]);
+                params.put("calificacion_final", String.valueOf(CalificacionFinal));
 
                 return params;
             }
@@ -303,7 +335,11 @@ public class Auditando extends AppCompatActivity {
                         String contable = jsonObjectPreguntas.getString("contable");
 
 
+
                         contableSINO[i] = contable;
+
+
+
 
                         LinearLayout linearLayoutPadre = findViewById(R.id.layout_padre);
                         linearLayoutPadre.setPadding(10,10,10,0);

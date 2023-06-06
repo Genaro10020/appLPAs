@@ -1,6 +1,8 @@
 package com.auditorias.applpas;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,16 +110,28 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             LinearLayout.LayoutParams paramsHallazgo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams paramsRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
             params.setMargins(10,0,10,10);
-            paramsHallazgo.setMargins(10,0,10,10);
+            paramsHallazgo.setMargins(20,0,10,10);
+            paramsRespuesta.setMargins(10,1,10,5);
+
+            int colorSubtitulos = R.color.red_400;// lo estoy tomando de res/values/colors.xml
+            int textColorRojoObscuro = ContextCompat.getColor(this, colorSubtitulos);
+
+            int colorRespuesta = R.color.respuestaHallazgo;
+            int colorRespuestaHallazgos = ContextCompat.getColor(this,colorRespuesta);
 
             JSONObject objeto = arregloConsulta.getJSONObject(i);
             String pregunta = objeto.getString("pregunta");
             String respuesta = objeto.getString("respuesta");
+            String contable = objeto.getString("contable");
+            String btn_seleccionado = objeto.getString("btn_seleccionado");
 
             TextView textViewPregunta = new TextView(this);
             TextView textViewRespuesta = new TextView(this);
+            textViewRespuesta.setLayoutParams(paramsRespuesta);
+
 
 
            if (i==0){//Muestro la palabra resultado en la parte superior 1 vez y muestro la primer pregunta, que es la pregunta Numero de nomina
@@ -124,25 +140,36 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textoResultado.setText("Resultados");
                textoResultado.setTypeface(null, Typeface.BOLD);
                textoResultado.setGravity(Gravity.CENTER);
+               textoResultado.setTextColor(textColorRojoObscuro);
                linearLayout.addView(textoResultado);
 
                textViewPregunta.setText((i+1)+".-"+pregunta);
+               textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
 
 
-           }else if(i==1){// muestro la segunda pregunta, que es la pregunta Nombre del evaluado.
+           }
+           if(i==1){// muestro la segunda pregunta, que es la pregunta Nombre del evaluado.
                textViewPregunta.setText((i+1)+".-"+pregunta);
+               textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
-           }else if (i==3){
-               TextView textViewHallazgos = new TextView(this);
+           }
+           if (i==2){
+               TextView textViewHallazgos = new TextView(this);//AGREGO EL TITULO HALLAZGOS
                textViewHallazgos.setText("Hallazgos");
                textViewHallazgos.setTypeface(null, Typeface.BOLD);
                textViewHallazgos.setGravity(Gravity.CENTER);
                textViewHallazgos.setLayoutParams(paramsHallazgo);
+               textViewHallazgos.setTextColor(textColorRojoObscuro);
                linearLayout.addView(textViewHallazgos);
            }
-
-
+           if(i>=2){
+                   if (contable.equals("Si") && btn_seleccionado.equals("NO")){
+                       textViewPregunta.setText((i+1)+".-"+pregunta);
+                       textViewRespuesta.setTextColor(colorRespuestaHallazgos);
+                       textViewRespuesta.setText(respuesta);
+                   }
+           }
 
            linearLayout.addView(textViewPregunta);
            linearLayout.addView(textViewRespuesta);
