@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ public class Auditando extends AppCompatActivity {
      double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion;
+    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion,Calificacion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -184,8 +185,10 @@ public class Auditando extends AppCompatActivity {
 
                                        int SumaContables = CantidadPreguntasContables-CantidadRespuestasNA;
                                        CalificacionFinal = ((double) CantidadRespuestasSI * 100) / (double) SumaContables;
+                                        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                                        Calificacion = decimalFormat.format(CalificacionFinal);
 
-                                       //Log.e("Calificacion",":"+CalificacionFinal+"Contable"+CantidadPreguntasContables);
+                                       Log.e("Calificacion",": CantidadPreguntasContable-"+CantidadPreguntasContables+"-CantidadRespuestasNA"+CantidadRespuestasNA+"=Sumacontable"+SumaContables+"CantidadSI"+CantidadRespuestasSI+"= Calificacion"+Calificacion);
 
 
                                         btnGuardar.setVisibility(View.GONE);
@@ -292,7 +295,7 @@ public class Auditando extends AppCompatActivity {
 
                 params.put("btn_tipo",tipo_boton);
                 params.put("btn_seleccionado",arregloBtnSeleccionado[index]);
-                params.put("calificacion_final", String.valueOf(CalificacionFinal));
+                params.put("calificacion_final",Calificacion);
 
                 return params;
             }
