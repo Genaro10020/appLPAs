@@ -9,4 +9,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="respuestaHallazgo">#C54F29</color><!--color utilizado también para los subtitulos-->
+    <color name="calificacion">#009688</color><!--Calificacion-->
 </resources>

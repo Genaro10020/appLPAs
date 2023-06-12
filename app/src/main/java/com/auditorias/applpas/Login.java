@@ -2,7 +2,9 @@ package com.auditorias.applpas;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -60,12 +62,7 @@ public class Login extends AppCompatActivity {
                             Log.e("RESPUESTA",""+response);
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
-
-
-
-
                                 String tipo_usuario = jsonResponse.getString("tipo_usuario");
-
                                 String id_usuario;
                                 String nombre;
                                     if(tipo_usuario.equals("Auditor")){
@@ -75,6 +72,14 @@ public class Login extends AppCompatActivity {
                                         id_usuario = jsonResponse.getString("id_responsable");
                                         nombre = jsonResponse.getString("responsable");
                                     }
+
+                                SharedPreferences sessionGuardada = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sessionGuardada.edit();
+                                editor.putString("ID_USUARIO",id_usuario);
+                                editor.putString("NOMBRE",nombre);
+                                editor.putString("TIPO_USUARIO",tipo_usuario);
+                                editor.commit();
+
                                         enviarVistaAditorias(id_usuario,nombre,tipo_usuario);
 
 

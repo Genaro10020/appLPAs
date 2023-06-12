@@ -6,8 +6,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +36,8 @@ import java.lang.reflect.Type;
 import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.Map;
+
+import kotlin.jvm.internal.Intrinsics;
 
 
 public class ResultadoAuditoria extends AppCompatActivity {
@@ -112,9 +117,12 @@ public class ResultadoAuditoria extends AppCompatActivity {
             LinearLayout.LayoutParams paramsHallazgo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
             LinearLayout.LayoutParams paramsRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
+
+
             params.setMargins(10,0,10,10);
             paramsHallazgo.setMargins(20,0,10,10);
             paramsRespuesta.setMargins(10,1,10,5);
+
 
             int colorSubtitulos = R.color.red_400;// lo estoy tomando de res/values/colors.xml
             int textColorRojoObscuro = ContextCompat.getColor(this, colorSubtitulos);
@@ -122,11 +130,15 @@ public class ResultadoAuditoria extends AppCompatActivity {
             int colorRespuesta = R.color.respuestaHallazgo;
             int colorRespuestaHallazgos = ContextCompat.getColor(this,colorRespuesta);
 
+            int colorCalificacion = R.color.calificacion;
+            int numcolorCalificacion = ContextCompat.getColor(this,colorCalificacion);
+
             JSONObject objeto = arregloConsulta.getJSONObject(i);
             String pregunta = objeto.getString("pregunta");
             String respuesta = objeto.getString("respuesta");
             String contable = objeto.getString("contable");
             String btn_seleccionado = objeto.getString("btn_seleccionado");
+            String Calificacion = objeto.getString("calificacion");
 
             TextView textViewPregunta = new TextView(this);
             TextView textViewRespuesta = new TextView(this);
@@ -169,6 +181,43 @@ public class ResultadoAuditoria extends AppCompatActivity {
                        textViewRespuesta.setTextColor(colorRespuestaHallazgos);
                        textViewRespuesta.setText(respuesta);
                    }
+           }
+
+           if (tamanioArreglo-1 == i){
+               TextView textCalificacion = new TextView(this);
+               TextView numCalificacion = new TextView(this);
+               textCalificacion.setTextSize(30);
+               textCalificacion.setGravity(Gravity.CENTER);
+               textCalificacion.setText("Calificación: ");
+
+               numCalificacion.setTextColor(numcolorCalificacion);
+               numCalificacion.setTextSize(30);
+               numCalificacion.setGravity(Gravity.CENTER);
+               numCalificacion.setText(Calificacion);
+               numCalificacion.setTypeface(null,Typeface.BOLD);
+               linearLayout.addView(textCalificacion);
+               linearLayout.addView(numCalificacion);
+
+               LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                       LinearLayout.LayoutParams.WRAP_CONTENT,
+                       (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
+               layoutParams.gravity = Gravity.CENTER;
+
+               Button btnSalir = new Button(this);
+               btnSalir.setText("Mis Auditorias");
+               btnSalir.setLayoutParams(layoutParams);
+               btnSalir.setPadding(10, 0, 10, 0);
+               btnSalir.setTextColor(Color.WHITE);
+               btnSalir.setBackgroundResource(R.drawable.boton_entrar);
+
+               linearLayout.addView(btnSalir);
+               btnSalir.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
+                       startActivity(intent);
+                   }
+               });
            }
 
            linearLayout.addView(textViewPregunta);

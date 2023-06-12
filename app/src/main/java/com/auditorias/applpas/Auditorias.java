@@ -2,6 +2,7 @@ package com.auditorias.applpas;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -51,13 +52,16 @@ public class Auditorias extends AppCompatActivity {
         TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSession) ;
         titulo_toolbar.setText("Auditorías");
 
-        Intent intent = getIntent();
+       /* Intent intent = getIntent();
         id_usuario= intent.getStringExtra("ID_USUARIO");
         nombre = intent.getStringExtra("NOMBRE");
         tipo_usuario = intent.getStringExtra("TIPO_USUARIO");
-        Log.e("","Auditor"+nombre+"id"+id_usuario+"tipo"+tipo_usuario);
+        Log.e("","Auditor"+nombre+"id"+id_usuario+"tipo"+tipo_usuario);*/
 
-
+        SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+        id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
+        nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
+        tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
 
 
         if(tipo_usuario.equals("Auditor")){
