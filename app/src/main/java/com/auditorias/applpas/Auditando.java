@@ -83,7 +83,11 @@ public class Auditando extends AppCompatActivity {
 
 
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
+        LinearLayout layoutBtnTres = (LinearLayout)findViewById(R.id.layoutBtnTres);
+
         layoutBtnDos.setVisibility(View.GONE);
+        layoutBtnTres.setVisibility(View.GONE);
+
         textUno = (TextView)findViewById(R.id.textView1);
         textUno.setText("Guardar");
         titulo.setText("Auditando");
@@ -188,7 +192,7 @@ public class Auditando extends AppCompatActivity {
                                         DecimalFormat decimalFormat = new DecimalFormat("#.##");
                                         Calificacion = decimalFormat.format(CalificacionFinal);
 
-                                       Log.e("Calificacion",": CantidadPreguntasContable-"+CantidadPreguntasContables+"-CantidadRespuestasNA"+CantidadRespuestasNA+"=Sumacontable"+SumaContables+"CantidadSI"+CantidadRespuestasSI+"= Calificacion"+Calificacion);
+                                       Log.e("Calificacion",": CantidadPreguntasContable:"+CantidadPreguntasContables+"-CantidadRespuestasNA"+CantidadRespuestasNA+"=Sumacontable"+SumaContables+"CantidadSI"+CantidadRespuestasSI+"= Calificacion"+Calificacion);
 
 
                                         btnGuardar.setVisibility(View.GONE);

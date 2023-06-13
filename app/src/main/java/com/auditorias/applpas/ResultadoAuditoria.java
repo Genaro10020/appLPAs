@@ -2,6 +2,7 @@ package com.auditorias.applpas;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
     String Codigo;
     int tamanioArreglo;
     JSONArray arregloConsulta;
+    Button btnCerrar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +58,22 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Resultado");
+
+        btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = miSession.edit();
+                editor.clear();
+                editor.apply();
+
+
+                Intent intent = new Intent(ResultadoAuditoria.this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
         consultarAuditoriaCodigo();
     }
@@ -203,15 +221,15 @@ public class ResultadoAuditoria extends AppCompatActivity {
                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
                layoutParams.gravity = Gravity.CENTER;
 
-               Button btnSalir = new Button(this);
-               btnSalir.setText("Mis Auditorias");
-               btnSalir.setLayoutParams(layoutParams);
-               btnSalir.setPadding(10, 0, 10, 0);
-               btnSalir.setTextColor(Color.WHITE);
-               btnSalir.setBackgroundResource(R.drawable.boton_entrar);
+               Button btnMisAuditorias = new Button(this);
+               btnMisAuditorias.setText("Mis Auditorias");
+               btnMisAuditorias.setLayoutParams(layoutParams);
+               btnMisAuditorias.setPadding(10, 0, 10, 0);
+               btnMisAuditorias.setTextColor(Color.WHITE);
+               btnMisAuditorias.setBackgroundResource(R.drawable.boton_entrar);
 
-               linearLayout.addView(btnSalir);
-               btnSalir.setOnClickListener(new View.OnClickListener() {
+               linearLayout.addView(btnMisAuditorias);
+               btnMisAuditorias.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
                        Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);

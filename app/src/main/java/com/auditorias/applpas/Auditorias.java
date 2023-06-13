@@ -43,6 +43,7 @@ public class Auditorias extends AppCompatActivity {
     String id_usuario;
     String nombre;
     String tipo_usuario;
+    Button btnCerrar,btnHistorial;
     //final Context context = getApplicationContext();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +52,31 @@ public class Auditorias extends AppCompatActivity {
         TextView titulo_toolbar =(TextView)findViewById(R.id.titulo_toolbar);
         TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSession) ;
         titulo_toolbar.setText("Auditorías");
+
+        btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = miSession.edit();
+                editor.clear();
+                editor.apply();
+
+
+                Intent intent = new Intent(Auditorias.this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
+        btnHistorial = (Button)findViewById(R.id.btnHistorial);
+        btnHistorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Auditorias.this,HistorialAuditoriasRealizadas.class);
+                startActivity(intent);
+            }
+        });
 
        /* Intent intent = getIntent();
         id_usuario= intent.getStringExtra("ID_USUARIO");

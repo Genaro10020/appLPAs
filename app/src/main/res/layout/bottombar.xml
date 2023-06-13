@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-
             android:orientation="vertical">
 
             <Button
@@ -61,6 +60,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hallazgos"
+                android:textColor="#ffff"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutBtnTres"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnCerrar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icono_cerrar_session" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Session"
                 android:textColor="#ffff"/>
         </LinearLayout>
 
