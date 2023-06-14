@@ -63,6 +63,7 @@ public class Login extends AppCompatActivity {
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
                                 String tipo_usuario = jsonResponse.getString("tipo_usuario");
+                                String num_nomina = jsonResponse.getString("nomina");
                                 String id_usuario;
                                 String nombre;
                                     if(tipo_usuario.equals("Auditor")){
@@ -76,6 +77,7 @@ public class Login extends AppCompatActivity {
                                 SharedPreferences sessionGuardada = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sessionGuardada.edit();
                                 editor.putString("ID_USUARIO",id_usuario);
+                                editor.putString("NUMERO_NOMINA",num_nomina);
                                 editor.putString("NOMBRE",nombre);
                                 editor.putString("TIPO_USUARIO",tipo_usuario);
                                 editor.commit();

@@ -45,7 +45,7 @@ public class Auditando extends AppCompatActivity {
      double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Responsable,Fecha_Programada,Descripcion,Calificacion;
+    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -75,6 +75,8 @@ public class Auditando extends AppCompatActivity {
         Codigo = intent.getStringExtra("CODIGO");
         Titulo = intent.getStringExtra("TITULO");
         Proceso = intent.getStringExtra("PROCESO");
+        Nomina_Auditor = intent.getStringExtra("NOMINA_AUDITOR");
+        Nomina_Responsable = intent.getStringExtra("NOMINA_RESPONSABLE");
         Responsable = intent.getStringExtra("RESPONSABLE");
         Fecha_Programada = intent.getStringExtra("FECHA_PROGRAMADA");
         Descripcion = intent.getStringExtra("DESCRIPCION");
@@ -115,9 +117,6 @@ public class Auditando extends AppCompatActivity {
                                                 JSONObject preguntas = arrayPreguntas.getJSONObject(i);
                                                 String tipo_boton = preguntas.getString("tipo_boton");
                                                 String pregunta_guardar = preguntas.getString("pregunta");
-
-
-
 
                                                     if (tipo_boton.equals("Si No y Na")) {
 
@@ -287,7 +286,11 @@ public class Auditando extends AppCompatActivity {
                 params.put("codigo",Codigo);
                 params.put("titulo",Titulo);
                 params.put("proceso",Proceso);
+
+                params.put("nomina_auditor",Nomina_Auditor);
+
                 params.put("auditor",Nombre_Auditor);
+                params.put("nomina_responsable",Nomina_Responsable);
                 params.put("responsable",Responsable);
                 params.put("descripcion",Descripcion);
                 params.put("fecha_programada",Fecha_Programada);
@@ -333,7 +336,7 @@ public class Auditando extends AppCompatActivity {
                     arregloBtnSeleccionado = new String[cantidad_preguntas];
 
 
-                   // Log.e("Largo del los arreglos","Cantidad"+cantidad_preguntas);
+                   //Log.e("Largo del los arreglos","Cantidad"+response);
                     for (int i=0; i < arrayPreguntas.length(); i++){
                         JSONObject jsonObjectPreguntas = arrayPreguntas.getJSONObject(i);
 

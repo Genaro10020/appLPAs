@@ -41,6 +41,7 @@ import java.util.Map;
 public class Auditorias extends AppCompatActivity {
     RequestQueue requestQueue;
     String id_usuario;
+    String num_nomina;
     String nombre;
     String tipo_usuario;
     Button btnCerrar,btnHistorial;
@@ -88,15 +89,18 @@ public class Auditorias extends AppCompatActivity {
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
+        num_nomina = miSession.getString("NUMERO_NOMINA","No existe NUMERO_NOMINA en MiSession");
+
 
 
         if(tipo_usuario.equals("Auditor")){
             Log.e("Es Auditor","SI");
-            textViewSession.setText("Auditor:"+ nombre);
+            textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
             consultarAuditorias();
         }else{
-            textViewSession.setText("Responsable: "+ nombre);
-            Log.e("Es Auditor","NO");
+            //textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
+            Intent intent = new Intent(this,HallazgosResponsable.class);
+            startActivity(intent);
         }
 
 
@@ -107,7 +111,7 @@ public class Auditorias extends AppCompatActivity {
         String url = "https://vvnorth.com/lpa/app/consultarAuditorias.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
-                    //Log.e("Auditoria", "" + response);
+                    Log.e("Auditoria", "" + response);
                     try {
                         JSONArray auditoriasArreglo = new JSONArray(response); //arreglo
 
@@ -120,6 +124,7 @@ public class Auditorias extends AppCompatActivity {
                                         String codigo = jsonObjectAuditoria.getString("codigo");
                                         String titulo = jsonObjectAuditoria.getString("titulo");
                                         String proceso = jsonObjectAuditoria.getString("proceso");
+                                        String nomina_responsable = jsonObjectAuditoria.getString("nomina");
                                         String responsable = jsonObjectAuditoria.getString("responsable");
                                         String fecha_programada = jsonObjectAuditoria.getString("fecha");
                                         String descripcion = jsonObjectAuditoria.getString("descripcion");
@@ -184,7 +189,7 @@ public class Auditorias extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                // Log.e("","Precionaste"+id_proceso);
-                                                enviarAuditando(id_proceso,codigo,titulo,proceso,responsable,fecha_programada,descripcion);
+                                                enviarAuditando(id_proceso,codigo,titulo,proceso,responsable,fecha_programada,descripcion,nomina_responsable,num_nomina);
                                             }
                                         });
 
@@ -233,13 +238,15 @@ public class Auditorias extends AppCompatActivity {
     }
 
 
-   private void enviarAuditando(String id_proceso,String codigo ,String titulo, String proceso,String responsable, String fecha_programada, String descripcion){
+   private void enviarAuditando(String id_proceso,String codigo ,String titulo, String proceso,String responsable, String fecha_programada, String descripcion, String nomina_responsable,String nomina_auditor){
         Intent intent = new Intent(Auditorias.this, Auditando.class);
         intent.putExtra("NOMBRE_AUDITOR",nombre);
         intent.putExtra("CODIGO",codigo);
         intent.putExtra("ID_PROCESO",id_proceso);
         intent.putExtra("TITULO",titulo);
         intent.putExtra("PROCESO",proceso);
+        intent.putExtra("NOMINA_AUDITOR",nomina_auditor);
+        intent.putExtra("NOMINA_RESPONSABLE",nomina_responsable);
         intent.putExtra("RESPONSABLE",responsable);
         intent.putExtra("FECHA_PROGRAMADA",fecha_programada);
         intent.putExtra("DESCRIPCION",descripcion);
