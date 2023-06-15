@@ -97,10 +97,12 @@ public class Auditorias extends AppCompatActivity {
             Log.e("Es Auditor","SI");
             textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
             consultarAuditorias();
+
         }else{
             //textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
-            Intent intent = new Intent(this,HallazgosResponsable.class);
+            /*Intent intent = new Intent(this,HallazgosResponsable.class);
             startActivity(intent);
+            finish();*/
         }
 
 

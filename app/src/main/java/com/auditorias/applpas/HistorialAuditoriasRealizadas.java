@@ -142,7 +142,7 @@ public class HistorialAuditoriasRealizadas extends AppCompatActivity {
 
 
        }, error -> {
-
+           Toast.makeText(getApplicationContext(), "Error :-(", Toast.LENGTH_SHORT).show();
        }){
            protected Map<String,String> getParams(){
                Map<String,String> params = new HashMap<>();

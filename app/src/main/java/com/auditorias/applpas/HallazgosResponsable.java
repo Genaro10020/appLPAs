@@ -3,13 +3,32 @@ package com.auditorias.applpas;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+
 public class HallazgosResponsable extends AppCompatActivity {
     String id_usuario,nombre,tipo_usuario,num_nomina;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +45,86 @@ public class HallazgosResponsable extends AppCompatActivity {
 
         TextView subtitulo = (TextView)findViewById(R.id.textUsuarioSession);
         subtitulo.setText("Responsable: "+nombre+" ("+num_nomina+")");
+
+        consultarHallazgosEnAuditorias();
+
+    }
+
+
+    public void consultarHallazgosEnAuditorias(){
+        String url = "https://vvnorth.com/lpa/app/consultarHallazgosEnAuditorias.php";
+        StringRequest request = new StringRequest(Request.Method.POST,url, response -> {
+            Log.e("Respuesta","consultarHallazgosEnAuditorias: "+response);
+
+            try {
+                JSONArray arregloHallazgos = new JSONArray(response);
+                if(arregloHallazgos.length()>0){
+
+
+                    for(int i=0; i < arregloHallazgos.length();i++){
+
+                        JSONObject  objetoDentroArregloHallazgos = arregloHallazgos.getJSONObject(i);
+
+
+                        // Obtenemos el LinearLayout padre
+                        LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+
+                        // Creamos el LinearLayout hijo
+                        LinearLayout linearLayoutHijo = new LinearLayout(this);
+                        linearLayoutHijo.setOrientation(LinearLayout.VERTICAL);
+
+                        // Establecer los parámetros de diseño del LinearLayout hijo
+                        LinearLayout.LayoutParams layoutParamsHijo = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        layoutParamsHijo.setMargins(5, 10, 5, 5);
+                        linearLayoutHijo.setPadding(10,10,10,10);
+
+                        linearLayoutHijo.setLayoutParams(layoutParamsHijo);
+                        linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_auditorias));
+
+                        TextView textCodigo = new TextView(this);
+                        TextView textProceso = new TextView(this);
+                        TextView textCantidadHallazgos = new TextView(this);
+                        TextView textEncontradas = new TextView(this);
+
+                        textCodigo.setText(Html.fromHtml("<b>Codigo: </b>"+objetoDentroArregloHallazgos.getString("codigo")));
+                        textProceso.setText(Html.fromHtml("<b>Proceso: </b>"+objetoDentroArregloHallazgos.getString("proceso")));
+                        textCantidadHallazgos.setText(Html.fromHtml("<b>Hallazgos: </b>"+objetoDentroArregloHallazgos.getString("sumaHallazgos")));
+                        textEncontradas.setText(Html.fromHtml("<b>Encontrados: </b>"+objetoDentroArregloHallazgos.getString("fecha_realizada")));
+
+                        linearLayoutHijo.addView(textCodigo);
+                        linearLayoutHijo.addView(textProceso);
+                        linearLayoutHijo.addView(textCantidadHallazgos);
+                        linearLayoutHijo.addView(textEncontradas);
+
+                        linearLayoutPadre.addView(linearLayoutHijo);
+
+                    }
+
+
+
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"No existen Hallazgos",Toast.LENGTH_SHORT).show();
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Toast.makeText(getApplicationContext(), "Error :-(", Toast.LENGTH_SHORT).show();
+        }){
+            protected Map<String,String> getParams(){
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("num_nomina_responsable",num_nomina);
+                return parametros;
+            }
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
 
     }
 }
