@@ -1,11 +1,17 @@
 package com.auditorias.applpas;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -37,6 +44,9 @@ public class HallazgosResponsable extends AppCompatActivity {
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Hallazgos");
 
+        TextView subTitulo = (TextView)findViewById(R.id.textSubtitulo);
+        subTitulo.setText("Listado de Auditorías con Hallazgos.");
+
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
@@ -47,7 +57,6 @@ public class HallazgosResponsable extends AppCompatActivity {
         subtitulo.setText("Responsable: "+nombre+" ("+num_nomina+")");
 
         consultarHallazgosEnAuditorias();
-
     }
 
 
@@ -61,9 +70,9 @@ public class HallazgosResponsable extends AppCompatActivity {
                 if(arregloHallazgos.length()>0){
 
 
-                    for(int i=0; i < arregloHallazgos.length();i++){
+                    for(int i=0; i < arregloHallazgos.length();i++) {
 
-                        JSONObject  objetoDentroArregloHallazgos = arregloHallazgos.getJSONObject(i);
+                        JSONObject objetoDentroArregloHallazgos = arregloHallazgos.getJSONObject(i);
 
 
                         // Obtenemos el LinearLayout padre
@@ -75,9 +84,11 @@ public class HallazgosResponsable extends AppCompatActivity {
 
                         // Establecer los parámetros de diseño del LinearLayout hijo
                         LinearLayout.LayoutParams layoutParamsHijo = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
+                        btnParams.gravity = Gravity.CENTER;
 
                         layoutParamsHijo.setMargins(5, 10, 5, 5);
-                        linearLayoutHijo.setPadding(10,10,10,10);
+                        linearLayoutHijo.setPadding(10, 10, 10, 10);
 
                         linearLayoutHijo.setLayoutParams(layoutParamsHijo);
                         linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_auditorias));
@@ -87,15 +98,39 @@ public class HallazgosResponsable extends AppCompatActivity {
                         TextView textCantidadHallazgos = new TextView(this);
                         TextView textEncontradas = new TextView(this);
 
-                        textCodigo.setText(Html.fromHtml("<b>Codigo: </b>"+objetoDentroArregloHallazgos.getString("codigo")));
-                        textProceso.setText(Html.fromHtml("<b>Proceso: </b>"+objetoDentroArregloHallazgos.getString("proceso")));
-                        textCantidadHallazgos.setText(Html.fromHtml("<b>Hallazgos: </b>"+objetoDentroArregloHallazgos.getString("sumaHallazgos")));
-                        textEncontradas.setText(Html.fromHtml("<b>Encontrados: </b>"+objetoDentroArregloHallazgos.getString("fecha_realizada")));
+                        String Codigo =objetoDentroArregloHallazgos.getString("codigo");
+
+                        textCodigo.setText(Html.fromHtml("<b>Codigo: </b>" + Codigo));
+                        textProceso.setText(Html.fromHtml("<b>Proceso: </b>" + objetoDentroArregloHallazgos.getString("proceso")));
+                        textCantidadHallazgos.setText(Html.fromHtml("<b>Hallazgos: </b>" + objetoDentroArregloHallazgos.getString("sumaHallazgos")));
+                        textEncontradas.setText(Html.fromHtml("<b>Encontrados: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
+
+                        Button btnVerHallazgos = new Button(this);
+                        btnVerHallazgos.setLayoutParams(btnParams);
+                        btnVerHallazgos.setPadding(10, 0, 10, 0);
+                        btnVerHallazgos.setTextColor(Color.WHITE);
+                        btnVerHallazgos.setTextSize(12);
+                        btnVerHallazgos.setText("Status Hallazgo/s");
+                        btnVerHallazgos.setBackgroundResource(R.drawable.fondo_btn);
+
+                        btnVerHallazgos.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(HallazgosResponsable.this,StatusHallazgos.class);
+                                intent.putExtra("CODIGO", Codigo);
+                                startActivity(intent);
+                            }
+                        });
+
+
+
+
 
                         linearLayoutHijo.addView(textCodigo);
                         linearLayoutHijo.addView(textProceso);
                         linearLayoutHijo.addView(textCantidadHallazgos);
                         linearLayoutHijo.addView(textEncontradas);
+                        linearLayoutHijo.addView(btnVerHallazgos);
 
                         linearLayoutPadre.addView(linearLayoutHijo);
 

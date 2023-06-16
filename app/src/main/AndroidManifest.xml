@@ -36,5 +36,8 @@
         <activity android:name=".HallazgosResponsable"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".StatusHallazgos"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 </manifest>
