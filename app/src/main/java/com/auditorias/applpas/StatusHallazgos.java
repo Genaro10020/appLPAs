@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Layout;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -52,8 +53,33 @@ public class StatusHallazgos extends AppCompatActivity {
         TextView textSession = (TextView)findViewById(R.id.textUsuarioSession);
         textSession.setText("Responsable: "+nombre+" ("+num_nomina+")");
 
-        TextView subtitulo = (TextView)findViewById(R.id.textSubtitulo);
-        subtitulo.setText("Status de su plan de acción en hallazgos");
+        LinearLayout btnHistorial = (LinearLayout)findViewById(R.id.layoutBtnUno);
+        btnHistorial.setVisibility(View.GONE);
+
+        Button btnHallazgos = (Button)findViewById(R.id.btnHallazgos);
+        btnHallazgos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StatusHallazgos.this,HallazgosResponsable.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = miSession.edit();
+                editor.clear();
+                editor.apply();
+
+                Intent intent = new Intent(StatusHallazgos.this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
 
         statusHallazgos();
 
@@ -70,10 +96,13 @@ public class StatusHallazgos extends AppCompatActivity {
                 if (arregloHallazgos.length()>0){
 
                     int bandera_plana = 0; int bandera_evidencia = 0; int bandera_aprobacion = 0;
+                    Button[] btnAccion = new Button[arregloHallazgos.length()];
 
                     for (int i=0; i <arregloHallazgos.length(); i++){
                         JSONObject objetoDentroArregloHallazgos = arregloHallazgos.getJSONObject(i);
 
+                        TextView subtitulo = (TextView)findViewById(R.id.textSubtitulo);
+                        subtitulo.setText("Proceso: "+objetoDentroArregloHallazgos.getString("proceso")+", status de su plan de acción en hallazgos");
 
                         // Obtenemos el LinearLayout padre
                         LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
@@ -100,55 +129,67 @@ public class StatusHallazgos extends AppCompatActivity {
                         TextView textColaborador = new TextView(this);
                         TextView textPregunta = new TextView(this);
                         TextView textRespuesta = new TextView(this);
+                        TextView textCodigoHallazgo = new TextView(this);
 
                         TextView textTituloStatusPlan = new TextView(this);
                         TextView textTituloStatusEvidencia = new TextView(this);
                         TextView textTituloStatusAprobacion = new TextView(this);
 
-                        Button btnAccion = new Button(this);
-                        btnAccion.setLayoutParams(btnParams);
+                        btnAccion[i] = new Button(this);
+                        btnAccion[i].setLayoutParams(btnParams);
 
                         String texto_en_btn = null;
-                        if(bandera_plana == 0){
+                        String clase = "";
+                        String id_hallazgo = objetoDentroArregloHallazgos.getString("id");
+                        String nombre_evaluado = objetoDentroArregloHallazgos.getString("nombre_evaluado");
+
+                        textFecha.setText(Html.fromHtml("<b>Fecha del hallázgo: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
+                        textColaborador.setText(Html.fromHtml("<b>Colaborador: </b>" +nombre_evaluado+" ("+objetoDentroArregloHallazgos.getString("nomina_evaluado")+")"));
+                        textPregunta.setText(Html.fromHtml("<b>Pregunta: </b>" + objetoDentroArregloHallazgos.getString("pregunta")));
+                        textRespuesta.setText(Html.fromHtml("<b>Respuesta: </b>" + objetoDentroArregloHallazgos.getString("respuesta")));
+                        textCodigoHallazgo.setText(Html.fromHtml("<b>Código de Hállazgo: </b>" + id_hallazgo));
+
+
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
-                                textTituloStatusPlan.setText("Pendientes PLAN DE ACCIÓN");
-                                int Color = getResources().getColor(R.color.red_400);
-                                textTituloStatusPlan.setTextColor(Color);
-                                textTituloStatusPlan.setTypeface(null, Typeface.BOLD);
-                                textTituloStatusPlan.setLayoutParams(layoutParamsTitulos);
-                                linearLayoutPadre.addView(textTituloStatusPlan);
-                                bandera_plana=1;
-
+                                if(bandera_plana == 0)
+                                {
+                                    textTituloStatusPlan.setText("Pendientes PLAN DE ACCIÓN");
+                                    int Color = getResources().getColor(R.color.red_400);
+                                    textTituloStatusPlan.setTextColor(Color);
+                                    textTituloStatusPlan.setTypeface(null, Typeface.BOLD);
+                                    textTituloStatusPlan.setLayoutParams(layoutParamsTitulos);
+                                    linearLayoutPadre.addView(textTituloStatusPlan);
+                                    bandera_plana=1;
+                                }
                             }
-                        }
 
 
-                        if(bandera_evidencia == 0){
+
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Evidencia")){
-                                textTituloStatusEvidencia.setText("Pendientes EVIDENCIA");
-                                int Color = getResources().getColor(R.color.red_400);
-                                textTituloStatusEvidencia.setTextColor(Color);
-                                textTituloStatusEvidencia.setLayoutParams(layoutParamsTitulos);
-                                textTituloStatusEvidencia.setTypeface(null,Typeface.BOLD);
-                                linearLayoutPadre.addView(textTituloStatusEvidencia);
-                                bandera_evidencia=1;
-
+                                if(bandera_evidencia == 0){
+                                    textTituloStatusEvidencia.setText("Pendientes EVIDENCIA");
+                                    int Color = getResources().getColor(R.color.red_400);
+                                    textTituloStatusEvidencia.setTextColor(Color);
+                                    textTituloStatusEvidencia.setLayoutParams(layoutParamsTitulos);
+                                    textTituloStatusEvidencia.setTypeface(null,Typeface.BOLD);
+                                    linearLayoutPadre.addView(textTituloStatusEvidencia);
+                                    bandera_evidencia=1;
+                                }
                             }
-                        }
 
 
-                        if(bandera_aprobacion == 0){
+
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Aprobación")){
-                                textTituloStatusAprobacion.setText("Pendientes APROBACIÓN");
-                                int Color = getResources().getColor(R.color.red_400);
-                                textTituloStatusAprobacion.setTextColor(Color);
-                                textTituloStatusAprobacion.setTypeface(null,Typeface.BOLD);
-                                textTituloStatusAprobacion.setLayoutParams(layoutParamsTitulos);
-                                linearLayoutPadre.addView(textTituloStatusAprobacion);
-                                bandera_aprobacion=1;
-
+                                if(bandera_aprobacion == 0){
+                                    textTituloStatusAprobacion.setText("Pendientes APROBACIÓN");
+                                    int Color = getResources().getColor(R.color.red_400);
+                                    textTituloStatusAprobacion.setTextColor(Color);
+                                    textTituloStatusAprobacion.setTypeface(null,Typeface.BOLD);
+                                    textTituloStatusAprobacion.setLayoutParams(layoutParamsTitulos);
+                                    linearLayoutPadre.addView(textTituloStatusAprobacion);
+                                    bandera_aprobacion=1;
+                                }
                             }
-                        }
 
                         if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
                             texto_en_btn = "Crear Plan";
@@ -158,23 +199,27 @@ public class StatusHallazgos extends AppCompatActivity {
                             texto_en_btn = "Ver";
                         }
 
+                        btnAccion[i].setPadding(10, 0, 10, 0);
+                        btnAccion[i].setTextColor(Color.WHITE);
+                        btnAccion[i].setTextSize(12);
+                        btnAccion[i].setText(texto_en_btn);
+                        btnAccion[i].setBackgroundResource(R.drawable.fondo_btn);
 
-                        textFecha.setText(Html.fromHtml("<b>Fecha del hallázgo: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
-                        textColaborador.setText(Html.fromHtml("<b>Colaborador: </b>" + objetoDentroArregloHallazgos.getString("nombre_evaluado") +" ("+objetoDentroArregloHallazgos.getString("nomina_evaluado")+")"));
-                        textPregunta.setText(Html.fromHtml("<b>Pregunta: </b>" + objetoDentroArregloHallazgos.getString("pregunta")));
-                        textRespuesta.setText(Html.fromHtml("<b>Respuesta: </b>" + objetoDentroArregloHallazgos.getString("respuesta")));
 
-                        btnAccion.setPadding(10, 0, 10, 0);
-                        btnAccion.setTextColor(Color.WHITE);
-                        btnAccion.setTextSize(12);
-                        btnAccion.setText(texto_en_btn);
-                        btnAccion.setBackgroundResource(R.drawable.fondo_btn);
+                        btnAccion[i].setOnClickListener(v -> {
+                            Intent intent = new Intent(StatusHallazgos.this,PlanDeAccion.class);
+                            intent.putExtra("ID_HALLAZGO",id_hallazgo);
+                            intent.putExtra("NOMBRE_EVALUADO",nombre_evaluado);
+                            intent.putExtra("CODIGO_AUDITORIA",Codigo);
+                            startActivity(intent);
+                        });
 
                         linearLayoutHijo.addView(textFecha);
                         linearLayoutHijo.addView(textColaborador);
                         linearLayoutHijo.addView(textPregunta);
                         linearLayoutHijo.addView(textRespuesta);
-                        linearLayoutHijo.addView(btnAccion);
+                        linearLayoutHijo.addView(textCodigoHallazgo);
+                        linearLayoutHijo.addView(btnAccion[i]);
 
                         linearLayoutPadre.addView(linearLayoutHijo);
 

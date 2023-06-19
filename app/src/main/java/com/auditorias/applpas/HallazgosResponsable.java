@@ -56,6 +56,9 @@ public class HallazgosResponsable extends AppCompatActivity {
         TextView subtitulo = (TextView)findViewById(R.id.textUsuarioSession);
         subtitulo.setText("Responsable: "+nombre+" ("+num_nomina+")");
 
+        LinearLayout btnHistorial = (LinearLayout)findViewById(R.id.layoutBtnUno);
+        btnHistorial.setVisibility(View.GONE);
+
         consultarHallazgosEnAuditorias();
     }
 
@@ -118,6 +121,21 @@ public class HallazgosResponsable extends AppCompatActivity {
                             public void onClick(View v) {
                                 Intent intent = new Intent(HallazgosResponsable.this,StatusHallazgos.class);
                                 intent.putExtra("CODIGO", Codigo);
+                                startActivity(intent);
+                            }
+                        });
+
+                        Button btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+                        btnCerrar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = miSession.edit();
+                                editor.clear();
+                                editor.apply();
+
+                                Intent intent = new Intent(HallazgosResponsable.this,Login.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }
                         });
