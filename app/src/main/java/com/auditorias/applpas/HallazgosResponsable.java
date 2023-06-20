@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,6 @@ import java.util.Map;
 
 public class HallazgosResponsable extends AppCompatActivity {
     String id_usuario,nombre,tipo_usuario,num_nomina;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

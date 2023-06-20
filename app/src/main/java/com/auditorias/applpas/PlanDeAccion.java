@@ -1,19 +1,29 @@
 package com.auditorias.applpas;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -33,10 +43,18 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 public class PlanDeAccion  extends AppCompatActivity {
     String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso;
     Button btnGuardar;
     EditText editplanAccion;
+    Calendar calendar;
+    long currentDate;
+    TextView titulo;
+    ImageView fotografia;
+    private static final int REQUEST_IMAGE_GALLERY = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private CalendarView calendarView;
     public void onCreate(Bundle SavedInstanceState){
@@ -54,14 +72,16 @@ public class PlanDeAccion  extends AppCompatActivity {
         nombre_evaluado = intent.getStringExtra("NOMBRE_EVALUADO");
         codigo_auditoria = intent.getStringExtra("CODIGO_AUDITORIA");
 
+        Button btnImagen = (Button)findViewById(R.id.buttonImagen);
         TextView textSession = (TextView)findViewById(R.id.textUsuarioSession);
-        TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
+        titulo = (TextView)findViewById(R.id.titulo_toolbar);
+        titulo.setText("Plan de Acción");
         TextView subtitulo = (TextView)findViewById(R.id.textSubtitulo);
         editplanAccion = (EditText)findViewById(R.id.editPlan);
 
         textSession.setText("Responsable: "+nombre+" ("+num_nomina+")");
-        titulo.setText("Plan de Acción"+id_hallazgo);
-        subtitulo.setText("Favor de crear tu plan de acción para este hallázgo, id: "+id_hallazgo);
+
+        subtitulo.setText("Favor de crear tu plan de acción para este hallázgo con ID: "+id_hallazgo+".");
 
         btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
@@ -69,44 +89,100 @@ public class PlanDeAccion  extends AppCompatActivity {
         TextView textUno = (TextView)findViewById(R.id.textView1);
         textUno.setText("Guardar");
 
+        fotografia = (ImageView)findViewById(R.id.FotografiaTomada);
+
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
         LinearLayout layoutBtnTres = (LinearLayout)findViewById(R.id.layoutBtnTres);
         layoutBtnDos.setVisibility(View.GONE);
         layoutBtnTres.setVisibility(View.GONE);
 
-        calendarView = findViewById(R.id.fechaCompromiso);
-        // Obtén la fecha actual
-        Calendar calendar = Calendar.getInstance();
-        long currentDate = calendar.getTimeInMillis();
-        // Establece la fecha mínima como la fecha actual
-        calendarView.setMinDate(currentDate);
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        btnImagen.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // Aquí puedes obtener la fecha seleccionada y realizar las acciones necesarias
-                feha_compromiso = dayOfMonth + "/" + (month + 1) + "/" + year;
-                Toast.makeText(getApplicationContext(), "Su fecha compromiso: " + feha_compromiso, Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                // Verifica si el botón presionado es el botón de imagen
+
+                    // Crea un diálogo para que el usuario seleccione si desea tomar una foto o elegir de la galería
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PlanDeAccion.this);
+                    builder.setTitle("Seleccionar imagen");
+                    builder.setItems(new CharSequence[]{"Tomar foto", "Elegir de la galería"}, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    // El usuario eligió tomar una foto
+                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                                    }
+                                    break;
+                                case 1:
+                                    // El usuario eligió elegir de la galería
+                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                    startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+                                    break;
+                            }
+                        }
+                    });
+                    builder.show();
             }
         });
-
-                btnGuardar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        plan_de_accion = editplanAccion.getText().toString();
-
-                        if(feha_compromiso != null && plan_de_accion != null && !feha_compromiso.equals("") && !plan_de_accion.equals("")){
-                            guardarPlanDeAccion();
-                        }else{
-                            Toast.makeText(getApplicationContext(), "los campos con (*) son requeridos", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }
-                });
 
         consultarHallazgoID();
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_GALLERY && data != null) {
+                // La imagen seleccionada de la galería
+                Uri imageUri = data.getData();
+                fotografia.setImageURI(imageUri);
+                // Hacer algo con la imagen seleccionada
+                // ...
+            }else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+                // La foto tomada con la cámara
+                Uri imageUri = data.getData();
+                Log.d("YourActivity", "Image URI: " + imageUri.toString());
+                fotografia.setImageURI(imageUri);
+                //fotografia.setImageURI(data.getData());
+                // Hacer algo con la foto tomada
+                // ...
+            }
+        }
+    }
+
+
+/*
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            int newWidth = 1000;
+            int newHeight = 1000;;
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
+
+            tomar_foto_area.setImageBitmap(resizedBitmap);
+            fotografiaTomada = 1;
+            leyenda.setText("");
+            tomar_foto_area.setImageURI(data.getData());
+
+            Bitmap bitmap = ((BitmapDrawable)tomar_foto_area.getDrawable()).getBitmap();
+            ViewGroup.LayoutParams param = drawView.getLayoutParams();
+            param.width = 1000;
+            param.height = 1000;
+            drawView.setLayoutParams(param);
+            drawView.setVisibility(View.VISIBLE);
+            drawView.setBitmap(bitmap);
+            bitmapf=drawView.getBitmap();
+
+
+        }
+    }*/
 
     public void consultarHallazgoID(){
         String Url = "https://vvnorth.com/lpa/app/consultarHallazgoID.php";
@@ -119,6 +195,93 @@ public class PlanDeAccion  extends AppCompatActivity {
                             JSONObject respuestaJSON = new JSONObject(response);
                             String pregunta = respuestaJSON.getString("pregunta");
                             String respuesta = respuestaJSON.getString("respuesta");
+                            String status_hallazgo = respuestaJSON.getString("status_hallazgos");
+                            String plan = respuestaJSON.getString("plan_de_accion");
+                            String fecha_compromiso = respuestaJSON.getString("fecha_compromiso");
+
+
+
+                            TextView tituloComentario = (TextView)findViewById(R.id.textView6);
+                            TextView tituloBotones = (TextView)findViewById(R.id.textView7);
+                            LinearLayout linearBotones = (LinearLayout)findViewById(R.id.linearBotones);
+                            EditText editComentario = (EditText)findViewById(R.id.editComentario);
+                            EditText editPlan = (EditText)findViewById(R.id.editPlan);
+
+                            calendarView = findViewById(R.id.fechaCompromiso);
+                            if (status_hallazgo.equals("Pendiente Plan")){
+                                        titulo.setText("Plan de Acción");
+                                        // Obtén la fecha actual
+                                        calendar = Calendar.getInstance();
+                                        currentDate = calendar.getTimeInMillis();
+                                        // Establece la fecha mínima como la fecha actual
+                                        calendarView.setMinDate(currentDate);//De esta forma no podran elegir fecha anteriores
+                                        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                                            @Override
+                                            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                                                // Aquí puedes obtener la fecha seleccionada y realizar las acciones necesarias
+                                                feha_compromiso = dayOfMonth + "/" + (month + 1) + "/" + year;
+                                                Toast.makeText(getApplicationContext(), "Su fecha compromiso: " + feha_compromiso, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        tituloComentario.setVisibility(View.GONE);
+                                        editComentario.setVisibility(View.GONE);
+                                        tituloBotones.setVisibility(View.GONE);
+                                        linearBotones.setVisibility(View.GONE);
+
+
+                                                btnGuardar.setOnClickListener(new View.OnClickListener() {//GUARDAR PLAN DE ACCION
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        plan_de_accion = editplanAccion.getText().toString();
+
+                                                        if(feha_compromiso != null && plan_de_accion != null && !feha_compromiso.equals("") && !plan_de_accion.equals("")){
+                                                            guardarPlanDeAccion();
+                                                        }else{
+                                                            Toast.makeText(getApplicationContext(), "los campos con (*) son requeridos", Toast.LENGTH_SHORT).show();
+                                                        }
+
+
+                                                    }
+                                                });
+
+
+                            }else if(status_hallazgo.equals("Pendiente Evidencia")){
+                                        titulo.setText("Evidencia");
+                                        editPlan.setEnabled(false);
+                                        editPlan.setText(plan);
+                                        // Separar la fecha en día, mes y año utilizando la barra diagonal como referencia
+                                        String[] partesFecha = fecha_compromiso.split("/");
+                                        // Obtener el día, mes y año por separado
+                                        String dia = partesFecha[0];
+                                        String mes = partesFecha[1];
+                                        String anio = partesFecha[2];
+
+
+                                        // Crear una nueva instancia de Calendar para la fecha de la base de datos
+                                        Calendar calendarBD = Calendar.getInstance();
+                                        // Establece la fecha en el objeto Calendar
+                                        calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
+                                        calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                        calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
+                                        calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
+                                        // Establecer fecha mínima
+                                        calendarView.setMinDate(calendarBD.getTimeInMillis());
+                                        // Establecer fecha máxima como la misma fecha seleccionada
+                                        calendarView.setMaxDate(calendarBD.getTimeInMillis());
+                                        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                                            @Override
+                                            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                                                calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
+                                                calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                                calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
+                                                calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
+                                                Toast.makeText(getApplicationContext(), "No es posible cambiar la fecha compromiso.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                            }
+
 
                             TextView textNombreColaborador = (TextView)findViewById(R.id.textColaborador);
                             TextView textPregunta = (TextView)findViewById(R.id.textPregunta);

@@ -95,14 +95,18 @@ public class StatusHallazgos extends AppCompatActivity {
 
                 if (arregloHallazgos.length()>0){
 
-                    int bandera_plana = 0; int bandera_evidencia = 0; int bandera_aprobacion = 0;
+                    int bandera_plana = 0; int bandera_evidencia = 0; int bandera_aprobacion = 0;int bandera_finalizado = 0;
                     Button[] btnAccion = new Button[arregloHallazgos.length()];
 
                     for (int i=0; i <arregloHallazgos.length(); i++){
                         JSONObject objetoDentroArregloHallazgos = arregloHallazgos.getJSONObject(i);
+                        String texto_en_btn = null;
+                        String clase = "";
+                        String id_hallazgo = objetoDentroArregloHallazgos.getString("id");
+                        String nombre_evaluado = objetoDentroArregloHallazgos.getString("nombre_evaluado");
 
                         TextView subtitulo = (TextView)findViewById(R.id.textSubtitulo);
-                        subtitulo.setText("Proceso: "+objetoDentroArregloHallazgos.getString("proceso")+", status de su plan de acción en hallazgos");
+                        subtitulo.setText("Proceso: "+objetoDentroArregloHallazgos.getString("proceso")+"\nEtapas: (1/4) Plan de Acción, (2/4) Evidencia, (3/4) Aprobación, (4/4) Finalizado.");
 
                         // Obtenemos el LinearLayout padre
                         LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
@@ -134,14 +138,12 @@ public class StatusHallazgos extends AppCompatActivity {
                         TextView textTituloStatusPlan = new TextView(this);
                         TextView textTituloStatusEvidencia = new TextView(this);
                         TextView textTituloStatusAprobacion = new TextView(this);
+                        TextView textTituloStatusFinalizado = new TextView(this);
 
                         btnAccion[i] = new Button(this);
                         btnAccion[i].setLayoutParams(btnParams);
 
-                        String texto_en_btn = null;
-                        String clase = "";
-                        String id_hallazgo = objetoDentroArregloHallazgos.getString("id");
-                        String nombre_evaluado = objetoDentroArregloHallazgos.getString("nombre_evaluado");
+
 
                         textFecha.setText(Html.fromHtml("<b>Fecha del hallázgo: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
                         textColaborador.setText(Html.fromHtml("<b>Colaborador: </b>" +nombre_evaluado+" ("+objetoDentroArregloHallazgos.getString("nomina_evaluado")+")"));
@@ -191,11 +193,26 @@ public class StatusHallazgos extends AppCompatActivity {
                                 }
                             }
 
+                        if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Finalizado")){
+                            if(bandera_finalizado == 0){
+                                textTituloStatusFinalizado.setText("Hallazgos FINALIZADOS");
+                                int Color = getResources().getColor(R.color.red_400);
+                                textTituloStatusFinalizado.setTextColor(Color);
+                                textTituloStatusFinalizado.setTypeface(null,Typeface.BOLD);
+                                textTituloStatusFinalizado.setLayoutParams(layoutParamsTitulos);
+                                linearLayoutPadre.addView(textTituloStatusFinalizado);
+                                bandera_finalizado=1;
+                            }
+                        }
+
                         if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
                             texto_en_btn = "Crear Plan";
                         }else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Evidencia")){
                             texto_en_btn = "Subir Evidencia";
                         }else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Aprobación")){
+                            texto_en_btn = "Ver";
+                        }
+                        else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Finalizado")){
                             texto_en_btn = "Ver";
                         }
 

@@ -135,7 +135,7 @@
             <CalendarView
                 android:id="@+id/fechaCompromiso"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/textView6"
@@ -162,6 +162,7 @@
                 app:fontFamily="sans-serif-condensed-medium" />
 
             <LinearLayout
+                android:id="@+id/linearBotones"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -181,6 +182,12 @@
                     android:layout_weight="1"
                     android:text="Documento PDF" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/FotografiaTomada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ImageView>
 
 
         </LinearLayout>

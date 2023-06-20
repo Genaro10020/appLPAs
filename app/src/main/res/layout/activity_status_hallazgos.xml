@@ -19,11 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+        android:background="@drawable/linea_titularsession"
         android:gravity="center"
         android:textStyle="bold"
-        android:background="@drawable/linea_titularsession"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include">
@@ -33,14 +31,17 @@
     <TextView
         android:id="@+id/textSubtitulo"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center"
         android:text="SubTitulo"
         app:layout_constraintEnd_toEndOf="@+id/textUsuarioSession"
         app:layout_constraintStart_toStartOf="@+id/textUsuarioSession"
-        app:layout_constraintTop_toBottomOf="@+id/textUsuarioSession">
-    </TextView>
+        app:layout_constraintTop_toBottomOf="@+id/textUsuarioSession"></TextView>
 
     <ScrollView
         android:id="@+id/scrollView2"
