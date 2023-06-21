@@ -10,6 +10,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,14 +31,18 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.barteksc.pdfviewer.PDFView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -47,14 +52,16 @@ import java.util.Map;
 
 public class PlanDeAccion  extends AppCompatActivity {
     String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso;
-    Button btnGuardar;
+    Button btnGuardar, btnPDF, btnImagen;
     EditText editplanAccion;
     Calendar calendar;
     long currentDate;
     TextView titulo;
     ImageView fotografia;
+    Bitmap imageBitmap;
     private static final int REQUEST_IMAGE_GALLERY = 1;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_PDF = 3;
 
     private CalendarView calendarView;
     public void onCreate(Bundle SavedInstanceState){
@@ -72,7 +79,7 @@ public class PlanDeAccion  extends AppCompatActivity {
         nombre_evaluado = intent.getStringExtra("NOMBRE_EVALUADO");
         codigo_auditoria = intent.getStringExtra("CODIGO_AUDITORIA");
 
-        Button btnImagen = (Button)findViewById(R.id.buttonImagen);
+
         TextView textSession = (TextView)findViewById(R.id.textUsuarioSession);
         titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Plan de Acción");
@@ -86,6 +93,8 @@ public class PlanDeAccion  extends AppCompatActivity {
         btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
+
+
         TextView textUno = (TextView)findViewById(R.id.textView1);
         textUno.setText("Guardar");
 
@@ -96,93 +105,13 @@ public class PlanDeAccion  extends AppCompatActivity {
         layoutBtnDos.setVisibility(View.GONE);
         layoutBtnTres.setVisibility(View.GONE);
 
-        btnImagen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Verifica si el botón presionado es el botón de imagen
+        btnImagen = (Button)findViewById(R.id.buttonImagen);
+        btnPDF = (Button)findViewById(R.id.buttonPDF);
 
-                    // Crea un diálogo para que el usuario seleccione si desea tomar una foto o elegir de la galería
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PlanDeAccion.this);
-                    builder.setTitle("Seleccionar imagen");
-                    builder.setItems(new CharSequence[]{"Tomar foto", "Elegir de la galería"}, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    // El usuario eligió tomar una foto
-                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                                    }
-                                    break;
-                                case 1:
-                                    // El usuario eligió elegir de la galería
-                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
-                                    break;
-                            }
-                        }
-                    });
-                    builder.show();
-            }
-        });
 
         consultarHallazgoID();
 
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_GALLERY && data != null) {
-                // La imagen seleccionada de la galería
-                Uri imageUri = data.getData();
-                fotografia.setImageURI(imageUri);
-                // Hacer algo con la imagen seleccionada
-                // ...
-            }else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                // La foto tomada con la cámara
-                Uri imageUri = data.getData();
-                Log.d("YourActivity", "Image URI: " + imageUri.toString());
-                fotografia.setImageURI(imageUri);
-                //fotografia.setImageURI(data.getData());
-                // Hacer algo con la foto tomada
-                // ...
-            }
-        }
-    }
-
-
-/*
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            int newWidth = 1000;
-            int newHeight = 1000;;
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
-
-            tomar_foto_area.setImageBitmap(resizedBitmap);
-            fotografiaTomada = 1;
-            leyenda.setText("");
-            tomar_foto_area.setImageURI(data.getData());
-
-            Bitmap bitmap = ((BitmapDrawable)tomar_foto_area.getDrawable()).getBitmap();
-            ViewGroup.LayoutParams param = drawView.getLayoutParams();
-            param.width = 1000;
-            param.height = 1000;
-            drawView.setLayoutParams(param);
-            drawView.setVisibility(View.VISIBLE);
-            drawView.setBitmap(bitmap);
-            bitmapf=drawView.getBitmap();
-
-
-        }
-    }*/
 
     public void consultarHallazgoID(){
         String Url = "https://vvnorth.com/lpa/app/consultarHallazgoID.php";
@@ -230,20 +159,20 @@ public class PlanDeAccion  extends AppCompatActivity {
                                         linearBotones.setVisibility(View.GONE);
 
 
-                                                btnGuardar.setOnClickListener(new View.OnClickListener() {//GUARDAR PLAN DE ACCION
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        plan_de_accion = editplanAccion.getText().toString();
+                                        btnGuardar.setOnClickListener(new View.OnClickListener() {//GUARDAR PLAN DE ACCION
+                                            @Override
+                                            public void onClick(View v) {
+                                                plan_de_accion = editplanAccion.getText().toString();
 
-                                                        if(feha_compromiso != null && plan_de_accion != null && !feha_compromiso.equals("") && !plan_de_accion.equals("")){
-                                                            guardarPlanDeAccion();
-                                                        }else{
-                                                            Toast.makeText(getApplicationContext(), "los campos con (*) son requeridos", Toast.LENGTH_SHORT).show();
-                                                        }
+                                                if(feha_compromiso != null && plan_de_accion != null && !feha_compromiso.equals("") && !plan_de_accion.equals("")){
+                                                    guardarPlanDeAccion();
+                                                }else{
+                                                    Toast.makeText(getApplicationContext(), "los campos con (*) son requeridos", Toast.LENGTH_SHORT).show();
+                                                }
 
 
-                                                    }
-                                                });
+                                            }
+                                        });
 
 
                             }else if(status_hallazgo.equals("Pendiente Evidencia")){
@@ -280,7 +209,44 @@ public class PlanDeAccion  extends AppCompatActivity {
                                             }
                                         });
 
-                            }
+                                        btnImagen.setOnClickListener(v -> {
+                                            // Verifica si el botón presionado es el botón de imagen
+
+                                            // Crea un diálogo para que el usuario seleccione si desea tomar una foto o elegir de la galería
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(PlanDeAccion.this);
+                                            builder.setTitle("Seleccionar imagen");
+                                            builder.setItems(new CharSequence[]{"Tomar foto", "Elegir de la galería"}, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which) {
+                                                        case 0:
+                                                            tomarFoto();
+                                                            break;
+                                                        case 1:
+                                                            desdeGaleria();
+                                                            break;
+                                                    }
+                                                }
+                                            });
+                                            builder.show();
+                                        });
+
+                                        btnPDF.setOnClickListener(v -> {
+                                            // Abre el selector de archivos para elegir un PDF
+                                            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                            intent.setType("application/pdf");
+                                            startActivityForResult(intent, REQUEST_PDF);
+                                        });
+
+                                        //GUARDAR EVIDENCIA
+                                        btnGuardar.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                guardarEvidenciaIMGoPDF();
+                                            }
+                                        });
+
+                                    }
 
 
                             TextView textNombreColaborador = (TextView)findViewById(R.id.textColaborador);
@@ -314,6 +280,89 @@ public class PlanDeAccion  extends AppCompatActivity {
         queue.add(request);
     }
 
+    public void tomarFoto(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    public void desdeGaleria(){
+        // El usuario eligió elegir de la galería
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            imageBitmap = (Bitmap) extras.get("data");
+            int newWidth = 1000;
+            int newHeight = 1000;;
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
+            fotografia.setImageBitmap(resizedBitmap);
+           // fotografia.setImageURI(data.getData());
+
+        }else if(requestCode == REQUEST_IMAGE_GALLERY && data != null){
+            // La imagen seleccionada de la galería
+            Uri imageUri = data.getData();
+            fotografia.setImageURI(imageUri);
+            // Hacer algo con la imagen seleccionada
+        }else if(requestCode == REQUEST_PDF && resultCode == RESULT_OK){
+            // Obtiene la URI del archivo PDF seleccionado
+            Uri pdfUri = data.getData();
+            // Realiza las operaciones necesarias con el archivo PDF seleccionado, como subirlo al servidor
+            // Puedes usar la URI para obtener la ruta del archivo o leer su contenido
+            // Ejemplo: Imprimir la ruta del archivo PDF seleccionado
+            String filePath1 = pdfUri.getPath();
+            String filePath2 = new File(pdfUri.getPath()).getAbsolutePath();
+            Log.d("PDF Path1", filePath1);
+            Log.d("PDF Path2", filePath2);
+            PDFView pdfView = findViewById(R.id.pdfView);
+            pdfView.fromFile(new File(filePath2)).load();
+
+        }
+    }
+
+
+    public  void guardarEvidenciaIMGoPDF(){
+        String Url = "https://vvnorth.com/lpa/app/guardarEvidenciaIMGoPDF.php";
+
+        StringRequest requests = new StringRequest(Request.Method.POST, Url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("Respuesta","Evidencia: "+response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            protected Map<String, String> getParams() {
+                Map<String,String> parametros = new HashMap<>();
+                String imageData= imageToString(imageBitmap);
+                parametros.put("codigo",codigo_auditoria);
+                parametros.put("id_hallazgo",id_hallazgo);
+                parametros.put("imagen",imageData);
+                return parametros;
+            }
+        };
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(requests);
+    }
+
+    private String imageToString(Bitmap bitmapf) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmapf.compress(Bitmap.CompressFormat.JPEG,100, outputStream);
+        byte[] imageBytes= outputStream.toByteArray();
+        String encodeImage= Base64.encodeToString(imageBytes,Base64.DEFAULT);
+        return encodeImage;
+    }
+
+
     public void guardarPlanDeAccion(){
         String Url = "https://vvnorth.com/lpa/app/guardarPlanDeAccion.php";
 
@@ -340,7 +389,6 @@ public class PlanDeAccion  extends AppCompatActivity {
                 parametros.put("id_hallazgo",id_hallazgo);
                 parametros.put("plan_de_accion",plan_de_accion);
                 parametros.put("feha_compromiso",feha_compromiso);
-
 
                 return parametros;
             }
