@@ -34,11 +34,9 @@
         android:text="LPA's \n B I E N V E  N I D @"
         android:textColor="#8B0000"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -55,7 +53,8 @@
         app:layout_constraintBottom_toTopOf="@+id/btnIngresar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10">
 
 
         <EditText
@@ -97,7 +96,7 @@
     <Button
         android:id="@+id/btnIngresar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="90px"
         android:layout_marginBottom="88dp"
         android:background="@drawable/boton_entrar"
         android:shadowColor="#300000"

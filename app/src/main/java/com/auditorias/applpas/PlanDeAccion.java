@@ -4,11 +4,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfRenderer;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -24,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,25 +50,36 @@ import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
+
+
 
 public class PlanDeAccion  extends AppCompatActivity {
-    String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso;
+    String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso,documentoPDF,comentario_evidencia;
     Button btnGuardar, btnPDF, btnImagen;
     EditText editplanAccion;
     Calendar calendar;
     long currentDate;
     TextView titulo;
-    ImageView fotografia;
-    Bitmap imageBitmap;
+    ImageView fotografia, PDFView;
+    Bitmap imageBitmap,bitmapf;
     private static final int REQUEST_IMAGE_GALLERY = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_PDF = 3;
+    byte[] fileBytes;
+    EditText editComentario;
 
     private CalendarView calendarView;
     public void onCreate(Bundle SavedInstanceState){
@@ -79,6 +97,7 @@ public class PlanDeAccion  extends AppCompatActivity {
         nombre_evaluado = intent.getStringExtra("NOMBRE_EVALUADO");
         codigo_auditoria = intent.getStringExtra("CODIGO_AUDITORIA");
 
+        PDFView = findViewById(R.id.viewPdf);
 
         TextView textSession = (TextView)findViewById(R.id.textUsuarioSession);
         titulo = (TextView)findViewById(R.id.titulo_toolbar);
@@ -133,7 +152,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                             TextView tituloComentario = (TextView)findViewById(R.id.textView6);
                             TextView tituloBotones = (TextView)findViewById(R.id.textView7);
                             LinearLayout linearBotones = (LinearLayout)findViewById(R.id.linearBotones);
-                            EditText editComentario = (EditText)findViewById(R.id.editComentario);
+                            editComentario = (EditText)findViewById(R.id.editComentario);
                             EditText editPlan = (EditText)findViewById(R.id.editPlan);
 
                             calendarView = findViewById(R.id.fechaCompromiso);
@@ -242,7 +261,12 @@ public class PlanDeAccion  extends AppCompatActivity {
                                         btnGuardar.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                guardarEvidenciaIMGoPDF();
+                                                comentario_evidencia = editComentario.getText().toString();
+                                                if (documentoPDF== null && bitmapf==null ){
+                                                    Toast.makeText(getApplicationContext(),"Suba evidencias",Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    guardarEvidenciaIMGoPDF();
+                                                }
                                             }
                                         });
 
@@ -280,6 +304,39 @@ public class PlanDeAccion  extends AppCompatActivity {
         queue.add(request);
     }
 
+
+    public void cargarPDFEnImageView(Uri pdfUri) {
+        try {
+            // Inicializar PdfiumCore
+            PdfiumCore pdfiumCore = new PdfiumCore(this);
+
+            // Abrir el archivo PDF utilizando la Uri
+            ParcelFileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(pdfUri, "r");
+            PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
+
+            // Cargar la primera página del PDF
+            pdfiumCore.openPage(pdfDocument, 0);
+            int width = pdfiumCore.getPageWidthPoint(pdfDocument, 0);
+            int height = pdfiumCore.getPageHeightPoint(pdfDocument, 0);
+
+            // Crear un Bitmap con las dimensiones de la página del PDF
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            // Renderizar la página del PDF en el Bitmap
+            pdfiumCore.renderPageBitmap(pdfDocument, bitmap, 0, 0, 0, width, height);
+
+            // Configurar el Bitmap en el ImageView
+
+            PDFView.setImageBitmap(bitmap);
+
+            // Liberar los recursos
+            pdfiumCore.closeDocument(pdfDocument);
+            fileDescriptor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void tomarFoto(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -293,39 +350,86 @@ public class PlanDeAccion  extends AppCompatActivity {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+                if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {//FOTOGRAFIA
+                    //SI SE TOMA O SUBE FOTO
+                    btnImagen.setBackgroundResource(R.drawable.fondo_btn);
+                    btnImagen.setTextColor(Color.WHITE);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
-            int newWidth = 1000;
-            int newHeight = 1000;;
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
-            fotografia.setImageBitmap(resizedBitmap);
-           // fotografia.setImageURI(data.getData());
+                    //COMO ES IMGAGEN AL BTN PDF COLOCAREMOS
+                    btnPDF.setBackgroundResource(R.drawable.fondo_btn_default);
+                    PDFView.setImageDrawable(null); //formatenado la vista
+                    documentoPDF=null; //formateando variable
 
-        }else if(requestCode == REQUEST_IMAGE_GALLERY && data != null){
-            // La imagen seleccionada de la galería
-            Uri imageUri = data.getData();
-            fotografia.setImageURI(imageUri);
-            // Hacer algo con la imagen seleccionada
-        }else if(requestCode == REQUEST_PDF && resultCode == RESULT_OK){
-            // Obtiene la URI del archivo PDF seleccionado
-            Uri pdfUri = data.getData();
-            // Realiza las operaciones necesarias con el archivo PDF seleccionado, como subirlo al servidor
-            // Puedes usar la URI para obtener la ruta del archivo o leer su contenido
-            // Ejemplo: Imprimir la ruta del archivo PDF seleccionado
-            String filePath1 = pdfUri.getPath();
-            String filePath2 = new File(pdfUri.getPath()).getAbsolutePath();
-            Log.d("PDF Path1", filePath1);
-            Log.d("PDF Path2", filePath2);
-            PDFView pdfView = findViewById(R.id.pdfView);
-            pdfView.fromFile(new File(filePath2)).load();
+                    Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");
+                    int newWidth = 1000;
+                    int newHeight = 1000;;
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
+                    fotografia.setImageBitmap(resizedBitmap);
+                    Bitmap bitmap = ((BitmapDrawable)fotografia.getDrawable()).getBitmap();
+                    bitmapf=bitmap;
+                   // fotografia.setImageURI(data.getData());
+                }else if(requestCode == REQUEST_IMAGE_GALLERY && data != null) {//GALERIA
+                    //SI SE TOMA O SUBE FOTO
+                    btnImagen.setBackgroundResource(R.drawable.fondo_btn);
+                    btnImagen.setTextColor(Color.WHITE);
 
-        }
+                    PDFView.setImageDrawable(null);; //formatenado la vista
+                    documentoPDF=null; //formateando variable
+                    btnPDF.setBackgroundResource(R.drawable.fondo_btn_default);
+                    btnPDF.setTextColor(Color.BLACK);
+
+                    // La imagen seleccionada de la galería
+                    Uri imageUri = data.getData();
+                    fotografia.setImageURI(imageUri);
+                    Bitmap bitmap = ((BitmapDrawable)fotografia.getDrawable()).getBitmap();
+                    bitmapf = bitmap;
+
+                    // Hacer algo con la imagen seleccionada
+                }else if(requestCode == REQUEST_PDF && resultCode == RESULT_OK){//PDF
+
+                    /*fotografia.setImageDrawable(null);//reseteo fotografi tomada con camara
+                    btnImagen.setBackground(null);*/
+                    bitmapf=null;//reseteo fotografi tomada con camara
+                    fotografia.setImageDrawable(null);
+                    btnImagen.setBackgroundResource(R.drawable.fondo_btn_default);
+                    btnImagen.setTextColor(Color.BLACK);
+                    //PERO SI ES PDF
+
+                    btnPDF.setBackgroundResource(R.drawable.fondo_btn);
+                    btnPDF.setTextColor(Color.WHITE);
+                    Uri pdfUri = data.getData();
+                    cargarPDFEnImageView(pdfUri);
+
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(pdfUri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    byte[] fileBytes = getBytesFromInputStream(inputStream);
+                     documentoPDF = Base64.encodeToString(fileBytes, Base64.DEFAULT);
+                }
     }
 
+    private byte[] getBytesFromInputStream(InputStream inputStream) {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len;
+        try {
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return byteBuffer.toByteArray();
+    }
 
     public  void guardarEvidenciaIMGoPDF(){
         String Url = "https://vvnorth.com/lpa/app/guardarEvidenciaIMGoPDF.php";
@@ -343,10 +447,17 @@ public class PlanDeAccion  extends AppCompatActivity {
         }){
             protected Map<String, String> getParams() {
                 Map<String,String> parametros = new HashMap<>();
-                String imageData= imageToString(imageBitmap);
+                if (bitmapf != null) {
+                    String imageData= imageToString(bitmapf);
+                    parametros.put("imagen",imageData);
+                }
+                if(documentoPDF!=null){
+                    parametros.put("pdf",documentoPDF);
+                }
                 parametros.put("codigo",codigo_auditoria);
                 parametros.put("id_hallazgo",id_hallazgo);
-                parametros.put("imagen",imageData);
+                parametros.put("comentario_evidencia",comentario_evidencia);
+
                 return parametros;
             }
         };
@@ -356,7 +467,7 @@ public class PlanDeAccion  extends AppCompatActivity {
 
     private String imageToString(Bitmap bitmapf) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapf.compress(Bitmap.CompressFormat.JPEG,100, outputStream);
+        bitmapf.compress(Bitmap.CompressFormat.JPEG,80, outputStream);
         byte[] imageBytes= outputStream.toByteArray();
         String encodeImage= Base64.encodeToString(imageBytes,Base64.DEFAULT);
         return encodeImage;
