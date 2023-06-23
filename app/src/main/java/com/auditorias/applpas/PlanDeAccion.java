@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +56,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.CookieHandler;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +68,8 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.util.FitPolicy;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
-
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 
 public class PlanDeAccion  extends AppCompatActivity {
@@ -72,7 +78,7 @@ public class PlanDeAccion  extends AppCompatActivity {
     EditText editplanAccion;
     Calendar calendar;
     long currentDate;
-    TextView titulo;
+    TextView titulo,subtitulo, textUno;
     ImageView fotografia, PDFView;
     Bitmap imageBitmap,bitmapf;
     private static final int REQUEST_IMAGE_GALLERY = 1;
@@ -82,6 +88,7 @@ public class PlanDeAccion  extends AppCompatActivity {
     EditText editComentario;
 
     private CalendarView calendarView;
+
     public void onCreate(Bundle SavedInstanceState){
         super.onCreate(SavedInstanceState);
         setContentView(R.layout.activity_plan_de_accion);
@@ -102,19 +109,19 @@ public class PlanDeAccion  extends AppCompatActivity {
         TextView textSession = (TextView)findViewById(R.id.textUsuarioSession);
         titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Plan de Acción");
-        TextView subtitulo = (TextView)findViewById(R.id.textSubtitulo);
+        subtitulo = (TextView)findViewById(R.id.textSubtitulo);
         editplanAccion = (EditText)findViewById(R.id.editPlan);
 
         textSession.setText("Responsable: "+nombre+" ("+num_nomina+")");
 
-        subtitulo.setText("Favor de crear tu plan de acción para este hallázgo con ID: "+id_hallazgo+".");
+
 
         btnGuardar = (Button)findViewById(R.id.btnHistorial);
         btnGuardar.setBackgroundResource(R.drawable.icono_guardar);
 
 
 
-        TextView textUno = (TextView)findViewById(R.id.textView1);
+        textUno = (TextView)findViewById(R.id.textView1);
         textUno.setText("Guardar");
 
         fotografia = (ImageView)findViewById(R.id.FotografiaTomada);
@@ -146,6 +153,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                             String status_hallazgo = respuestaJSON.getString("status_hallazgos");
                             String plan = respuestaJSON.getString("plan_de_accion");
                             String fecha_compromiso = respuestaJSON.getString("fecha_compromiso");
+                            String comentario = respuestaJSON.getString("comentario");
 
 
 
@@ -158,6 +166,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                             calendarView = findViewById(R.id.fechaCompromiso);
                             if (status_hallazgo.equals("Pendiente Plan")){
                                         titulo.setText("Plan de Acción");
+                                        subtitulo.setText("Favor de crear tu plan de acción,ID hallázgo: "+id_hallazgo+".");
                                         // Obtén la fecha actual
                                         calendar = Calendar.getInstance();
                                         currentDate = calendar.getTimeInMillis();
@@ -184,6 +193,8 @@ public class PlanDeAccion  extends AppCompatActivity {
                                                 plan_de_accion = editplanAccion.getText().toString();
 
                                                 if(feha_compromiso != null && plan_de_accion != null && !feha_compromiso.equals("") && !plan_de_accion.equals("")){
+                                                    textUno.setText("Guardando Plan, Espere...");
+                                                    btnGuardar.setVisibility(View.GONE);
                                                     guardarPlanDeAccion();
                                                 }else{
                                                     Toast.makeText(getApplicationContext(), "los campos con (*) son requeridos", Toast.LENGTH_SHORT).show();
@@ -194,8 +205,16 @@ public class PlanDeAccion  extends AppCompatActivity {
                                         });
 
 
-                            }else if(status_hallazgo.equals("Pendiente Evidencia")){
-                                        titulo.setText("Evidencia");
+                            }else if(status_hallazgo.equals("Pendiente Evidencia") || status_hallazgo.equals("Rechazada")){
+                                        if(status_hallazgo.equals("Pendiente Evidencia")){
+                                            titulo.setText("Evidencia");
+                                            subtitulo.setText("Subir evidencia puede ser, fotografía, imágen o pdf, ID hallázgo: "+id_hallazgo+".");
+                                        }else if(status_hallazgo.equals("Rechazada")){
+                                            titulo.setText("Rechazada");
+                                            subtitulo.setText("Favor de subir evidencia corregida, ID hallázgo: "+id_hallazgo+".");
+                                        }
+
+
                                         editPlan.setEnabled(false);
                                         editPlan.setText(plan);
                                         // Separar la fecha en día, mes y año utilizando la barra diagonal como referencia
@@ -270,6 +289,122 @@ public class PlanDeAccion  extends AppCompatActivity {
                                             }
                                         });
 
+                                    }else if(status_hallazgo.equals("Pendiente Aprobación") || status_hallazgo.equals("Finalizado")){
+                                            if(status_hallazgo.equals("Pendiente Aprobación")){
+                                                titulo.setText("Aprobación");
+                                                subtitulo.setText("Espere a que sea aprobada o rechazada, ID hallázgo: "+id_hallazgo+".");
+                                            }else if(status_hallazgo.equals("Finalizado")){
+                                                titulo.setText("Finalizado");
+                                                subtitulo.setText("Este hallázgo finalizo con éxito, ID hallázgo: "+id_hallazgo+".");
+                                             }
+
+
+                                            linearBotones.setVisibility(View.GONE);//Ocultando Btns PNG Y PDF
+                                            btnGuardar.setVisibility(View.GONE);
+                                            textUno.setVisibility(View.GONE);
+
+
+                                            editPlan.setEnabled(false);
+                                            editPlan.setText(plan);
+                                            editComentario.setText(comentario);
+                                            editComentario.setEnabled(false);
+                                            // Separar la fecha en día, mes y año utilizando la barra diagonal como referencia
+                                            String[] partesFecha = fecha_compromiso.split("/");
+                                            // Obtener el día, mes y año por separado
+                                            String dia = partesFecha[0];
+                                            String mes = partesFecha[1];
+                                            String anio = partesFecha[2];
+
+
+                                            // Crear una nueva instancia de Calendar para la fecha de la base de datos
+                                            Calendar calendarBD = Calendar.getInstance();
+                                            // Establece la fecha en el objeto Calendar
+                                            calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
+                                            calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                            calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
+                                            calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
+                                            // Establecer fecha mínima
+                                            calendarView.setMinDate(calendarBD.getTimeInMillis());
+                                            // Establecer fecha máxima como la misma fecha seleccionada
+                                            calendarView.setMaxDate(calendarBD.getTimeInMillis());
+                                            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                                                @Override
+                                                public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                                                    calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
+                                                    calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                                    calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
+                                                    calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
+                                                    Toast.makeText(getApplicationContext(), "No es posible cambiar la fecha compromiso.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                    //fotografia.setImageDrawable(null);//formateando la vista
+                                String url1 = "https://vvnorth.com/lpa/app/evidencia/"+codigo_auditoria+"/"+id_hallazgo+"/evidencia.jpeg";
+
+
+                                // Realizar la carga de la imagen en un hilo separado (Thread) para no bloquear el hilo principal
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    // Crear una URL a partir de la URL de la imagen
+                                                    URL url = new URL(url1);
+
+                                                    // Abrir una conexión a la URL
+                                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                                                    connection.setDoInput(true);
+                                                    connection.connect();
+
+                                                    // Obtener el InputStream de la conexión
+                                                    InputStream inputStream = connection.getInputStream();
+
+                                                    // Decodificar el InputStream en un objeto Bitmap
+                                                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                                                    // Mostrar el Bitmap en el ImageView en el hilo principal
+                                                    fotografia.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            fotografia.setImageBitmap(bitmap);
+                                                        }
+                                                    });
+                                                } catch (IOException e) {
+                                                    //Toast.makeText(getApplicationContext(), "Catch, alcargar la IMG", Toast.LENGTH_SHORT).show();
+                                                    e.printStackTrace();
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            LinearLayout linear = new LinearLayout(PlanDeAccion.this);
+                                                           Button button = new Button(PlanDeAccion.this);
+
+                                                           LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                                           LinearLayout.LayoutParams paramsbtn = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                                                           linear.setLayoutParams(layoutParams);
+                                                           linear.setGravity(Gravity.CENTER);
+                                                           linear.setOrientation(LinearLayout.VERTICAL);
+                                                           button.setLayoutParams(paramsbtn);
+                                                           button.setText("Ver/Descargar PDF");
+                                                           button.setBackgroundResource(R.drawable.fondo_btn);
+                                                           button.setTextColor(Color.WHITE);
+                                                           linear.addView(button);
+                                                           LinearLayout layoutPrincipal  = (LinearLayout)findViewById(R.id.layoutPrincipal);
+                                                           layoutPrincipal.addView(linear);
+
+                                                            String url2 = "https://vvnorth.com/lpa/app/evidencia/"+codigo_auditoria+"/"+id_hallazgo+"/evidencia.pdf";
+                                                            Uri uri = Uri.parse(url2);
+                                                            cargarPDFEnImageView(uri);
+
+                                                           button.setOnClickListener(new View.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(View v) {
+                                                                   abrirExploradorConRuta(url2);
+                                                               }
+                                                           });
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }).start();
                                     }
 
 
@@ -289,7 +424,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                     }
 
                 }, error -> {
-            Toast.makeText(getApplicationContext(), "Error :-("+error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error :-(, Conexión de Internet"+error, Toast.LENGTH_SHORT).show();
         }){
             @Nullable
             @Override
@@ -304,6 +439,17 @@ public class PlanDeAccion  extends AppCompatActivity {
         queue.add(request);
     }
 
+
+
+    private void abrirExploradorConRuta(String url) {
+        if (!url.isEmpty()) {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        } else {
+            // La URL es vacía, manejar el caso apropiadamente
+        }
+    }
 
     public void cargarPDFEnImageView(Uri pdfUri) {
         try {
@@ -438,6 +584,22 @@ public class PlanDeAccion  extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.e("Respuesta","Evidencia: "+response);
+                if(response.replaceAll("\"", "").equals("Guardado Exitoso")){
+                    Intent intent = new Intent(PlanDeAccion.this,StatusHallazgos.class);
+                    intent.putExtra("CODIGO",codigo_auditoria);
+                    startActivity(intent);
+                }else{
+                    // Crear una instancia de Toast
+                    Toast toast = Toast.makeText(getApplicationContext(), "No se guardó correctamente" + response, Toast.LENGTH_SHORT);
+                    // Obtener el layout del Toast
+                    View toastView = toast.getView();
+                    // Establecer la gravedad al centro (en este caso, centro vertical y horizontal)
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    // Ajustar la posición manualmente
+                    toastView.setPadding(0, 0, 0, 0);
+                    // Mostrar el Toast
+                    toast.show();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -480,6 +642,8 @@ public class PlanDeAccion  extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     Log.e("consultaHallazgoID:",response);
+                    btnGuardar.setVisibility(View.VISIBLE);
+                    textUno.setText("Guardar");
                     if (response != null && response.length() > 0) {
                         Toast.makeText(getApplicationContext(), "Se guardo el plan con Éxito.", Toast.LENGTH_SHORT).show();
                         Intent intento = new Intent(this,StatusHallazgos.class);
@@ -491,7 +655,9 @@ public class PlanDeAccion  extends AppCompatActivity {
                     }
 
                 }, error -> {
-            Toast.makeText(getApplicationContext(), "Error :-("+error, Toast.LENGTH_SHORT).show();
+                    btnGuardar.setVisibility(View.VISIBLE);
+                    textUno.setText("Guardar");
+                    Toast.makeText(getApplicationContext(), "Error :-("+error, Toast.LENGTH_SHORT).show();
         }){
             @Nullable
             @Override

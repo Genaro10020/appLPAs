@@ -95,7 +95,7 @@ public class StatusHallazgos extends AppCompatActivity {
 
                 if (arregloHallazgos.length()>0){
 
-                    int bandera_plana = 0; int bandera_evidencia = 0; int bandera_aprobacion = 0;int bandera_finalizado = 0;
+                    int bandera_plana = 0; int bandera_evidencia = 0; int bandera_aprobacion = 0;int bandera_finalizado = 0, bandera_rechazado = 0;
                     Button[] btnAccion = new Button[arregloHallazgos.length()];
 
                     for (int i=0; i <arregloHallazgos.length(); i++){
@@ -139,6 +139,7 @@ public class StatusHallazgos extends AppCompatActivity {
                         TextView textTituloStatusEvidencia = new TextView(this);
                         TextView textTituloStatusAprobacion = new TextView(this);
                         TextView textTituloStatusFinalizado = new TextView(this);
+                        TextView textTituloStatusRechazado = new TextView(this);
 
                         btnAccion[i] = new Button(this);
                         btnAccion[i].setLayoutParams(btnParams);
@@ -151,6 +152,18 @@ public class StatusHallazgos extends AppCompatActivity {
                         textRespuesta.setText(Html.fromHtml("<b>Respuesta: </b>" + objetoDentroArregloHallazgos.getString("respuesta")));
                         textCodigoHallazgo.setText(Html.fromHtml("<b>Código de Hállazgo: </b>" + id_hallazgo));
 
+
+                        if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Rechazada")){
+                            if(bandera_rechazado == 0){
+                                textTituloStatusRechazado.setText("Hallazgos RECHAZADOS");
+                                int Color = getResources().getColor(R.color.red_400);
+                                textTituloStatusRechazado.setTextColor(Color);
+                                textTituloStatusRechazado.setTypeface(null,Typeface.BOLD);
+                                textTituloStatusRechazado.setLayoutParams(layoutParamsTitulos);
+                                linearLayoutPadre.addView(textTituloStatusRechazado);
+                                bandera_rechazado=1;
+                            }
+                        }
 
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
                                 if(bandera_plana == 0)
@@ -205,6 +218,8 @@ public class StatusHallazgos extends AppCompatActivity {
                             }
                         }
 
+
+
                         if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
                             texto_en_btn = "Crear Plan";
                         }else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Evidencia")){
@@ -214,6 +229,8 @@ public class StatusHallazgos extends AppCompatActivity {
                         }
                         else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Finalizado")){
                             texto_en_btn = "Ver";
+                        }else if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Rechazada")){
+                            texto_en_btn = "Corregir Evidencia";
                         }
 
                         btnAccion[i].setPadding(10, 0, 10, 0);
