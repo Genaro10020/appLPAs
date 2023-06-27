@@ -45,7 +45,7 @@ public class Auditando extends AppCompatActivity {
      double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String id_proceso,Codigo,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
+    String id_proceso,Codigo,Area,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -73,6 +73,7 @@ public class Auditando extends AppCompatActivity {
         Nombre_Auditor = intent.getStringExtra("NOMBRE_AUDITOR");
         id_proceso = intent.getStringExtra("ID_PROCESO");
         Codigo = intent.getStringExtra("CODIGO");
+        Area = intent.getStringExtra("AREA");
         Titulo = intent.getStringExtra("TITULO");
         Proceso = intent.getStringExtra("PROCESO");
         Nomina_Auditor = intent.getStringExtra("NOMINA_AUDITOR");
@@ -284,6 +285,7 @@ public class Auditando extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("total_preguntas", String.valueOf(cantidad_preguntas));
                 params.put("codigo",Codigo);
+                params.put("area",Area);
                 params.put("titulo",Titulo);
                 params.put("proceso",Proceso);
 
