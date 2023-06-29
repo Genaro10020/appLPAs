@@ -1,11 +1,14 @@
 package com.auditorias.applpas;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import java.util.Map;
 
 public class HistorialAuditoriasRealizadas extends AppCompatActivity {
     String id_usuario, nombre, tipo_usuario,nomina_auditor;
+    Button btnCerrar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,23 @@ public class HistorialAuditoriasRealizadas extends AppCompatActivity {
         textViewSession.setText("Usuario: " + nombre +" ("+nomina_auditor+")");
 
         consultarHistorial();
+
+
+        btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = miSession.edit();
+                editor.clear();
+                editor.apply();
+
+
+                Intent intent = new Intent(HistorialAuditoriasRealizadas.this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
 
     }

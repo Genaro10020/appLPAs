@@ -217,7 +217,7 @@ public class Auditorias extends AppCompatActivity {
                                         Toast toast = new Toast(this);
                                         toast.setDuration(Toast.LENGTH_SHORT);
                                         toast.setView(viewToast);
-                                        toast.setGravity(Gravity.CENTER_HORIZONTAL, 300, 10);
+                                        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                                         toast.show();
                         }
                     } catch (JSONException e) {

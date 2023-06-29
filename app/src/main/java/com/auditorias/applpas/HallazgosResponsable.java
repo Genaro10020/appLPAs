@@ -36,6 +36,7 @@ import java.util.Map;
 
 public class HallazgosResponsable extends AppCompatActivity {
     String id_usuario,nombre,tipo_usuario,num_nomina;
+    Button btnCerrar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,23 @@ public class HallazgosResponsable extends AppCompatActivity {
 
         LinearLayout btnHistorial = (LinearLayout)findViewById(R.id.layoutBtnUno);
         btnHistorial.setVisibility(View.GONE);
+
+        btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = miSession.edit();
+                editor.clear();
+                editor.apply();
+
+
+                Intent intent = new Intent(HallazgosResponsable.this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
 
         consultarHallazgosEnAuditorias();
     }
