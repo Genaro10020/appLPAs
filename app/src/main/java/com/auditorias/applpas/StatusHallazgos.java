@@ -127,7 +127,7 @@ public class StatusHallazgos extends AppCompatActivity {
                         linearLayoutHijo.setPadding(10, 10, 10, 10);
 
                         linearLayoutHijo.setLayoutParams(layoutParamsHijo);
-                        linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_auditorias));
+
 
                         TextView textFecha = new TextView(this);
                         TextView textColaborador = new TextView(this);
@@ -166,6 +166,7 @@ public class StatusHallazgos extends AppCompatActivity {
                         }
 
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Plan")){
+                                linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.contorno_hallazgo_plan));
                                 if(bandera_plana == 0)
                                 {
                                     textTituloStatusPlan.setText("Pendientes PLAN DE ACCIÓN");
@@ -181,6 +182,7 @@ public class StatusHallazgos extends AppCompatActivity {
 
 
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Evidencia")){
+                                linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.contorno_hallazgo_evidencia));
                                 if(bandera_evidencia == 0){
                                     textTituloStatusEvidencia.setText("Pendientes EVIDENCIA");
                                     int Color = getResources().getColor(R.color.red_400);
@@ -195,6 +197,7 @@ public class StatusHallazgos extends AppCompatActivity {
 
 
                             if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Pendiente Aprobación")){
+                                linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.contorno_hallazgo_aprobacion));
                                 if(bandera_aprobacion == 0){
                                     textTituloStatusAprobacion.setText("Pendientes APROBACIÓN");
                                     int Color = getResources().getColor(R.color.red_400);
@@ -207,6 +210,7 @@ public class StatusHallazgos extends AppCompatActivity {
                             }
 
                         if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Finalizado")){
+                            linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.contorno_hallazgo_finalizado));
                             if(bandera_finalizado == 0){
                                 textTituloStatusFinalizado.setText("Hallazgos FINALIZADOS");
                                 int Color = getResources().getColor(R.color.red_400);
