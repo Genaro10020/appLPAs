@@ -154,6 +154,8 @@ public class PlanDeAccion  extends AppCompatActivity {
                             String plan = respuestaJSON.getString("plan_de_accion");
                             String fecha_compromiso = respuestaJSON.getString("fecha_compromiso");
                             String comentario = respuestaJSON.getString("comentario");
+                            String bandera_img = respuestaJSON.getString("img_evidencia");
+                            String bandera_pdf = respuestaJSON.getString("pdf_evidencia");
 
 
 
@@ -218,6 +220,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                                         editPlan.setEnabled(false);
                                         editPlan.setText(plan);
                                         // Separar la fecha en día, mes y año utilizando la barra diagonal como referencia
+
                                         String[] partesFecha = fecha_compromiso.split("/");
                                         // Obtener el día, mes y año por separado
                                         String dia = partesFecha[0];
@@ -284,6 +287,8 @@ public class PlanDeAccion  extends AppCompatActivity {
                                                 if (documentoPDF== null && bitmapf==null ){
                                                     Toast.makeText(getApplicationContext(),"Suba evidencias",Toast.LENGTH_SHORT).show();
                                                 }else{
+                                                     textUno.setText("Guardando Evidencia, Espere...");
+                                                     btnGuardar.setVisibility(View.GONE);
                                                     guardarEvidenciaIMGoPDF();
                                                 }
                                             }
@@ -338,11 +343,47 @@ public class PlanDeAccion  extends AppCompatActivity {
                                                 }
                                             });
                                     //fotografia.setImageDrawable(null);//formateando la vista
-                                String url1 = "https://vvnorth.com/lpa/app/evidencia/"+codigo_auditoria+"/"+id_hallazgo+"/evidencia.jpeg";
+
+
+                                if (bandera_img.equals("1")){
+                                    String url = "https://vvnorth.com/lpa/app/evidencia/"+codigo_auditoria+"/"+id_hallazgo+"/evidencia.jpeg";
+                                    Picasso.get().load(url).into(fotografia);
+                                }
+                                if (bandera_pdf.equals("1")){
+                                    String url2 = "https://vvnorth.com/lpa/app/evidencia/"+codigo_auditoria+"/"+id_hallazgo+"/evidencia.pdf";
+                                        LinearLayout linear = new LinearLayout(PlanDeAccion.this);
+                                        Button button = new Button(PlanDeAccion.this);
+
+                                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        LinearLayout.LayoutParams paramsbtn = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                                        linear.setLayoutParams(layoutParams);
+                                        linear.setGravity(Gravity.CENTER);
+                                        linear.setOrientation(LinearLayout.VERTICAL);
+                                        button.setLayoutParams(paramsbtn);
+                                        button.setText("Ver/Descargar PDF");
+                                        button.setBackgroundResource(R.drawable.fondo_btn);
+                                        button.setTextColor(Color.WHITE);
+                                        linear.addView(button);
+                                        LinearLayout layoutPrincipal  = (LinearLayout)findViewById(R.id.layoutPrincipal);
+                                        layoutPrincipal.addView(linear);
+
+
+                                        Uri uri = Uri.parse(url2);
+                                        cargarPDFEnImageView(uri);
+
+                                        button.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                abrirExploradorConRuta(url2);
+                                            }
+                                        });
+
+                                }
 
 
                                 // Realizar la carga de la imagen en un hilo separado (Thread) para no bloquear el hilo principal
-                                        new Thread(new Runnable() {
+                                        /*new Thread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try {
@@ -404,7 +445,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                                                     });
                                                 }
                                             }
-                                        }).start();
+                                        }).start();*/
                                     }
 
 
@@ -583,6 +624,8 @@ public class PlanDeAccion  extends AppCompatActivity {
         StringRequest requests = new StringRequest(Request.Method.POST, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+            textUno.setText("Guardar");
+            btnGuardar.setVisibility(View.VISIBLE);
                 Log.e("Respuesta","Evidencia: "+response);
                 if(response.replaceAll("\"", "").equals("Guardado Exitoso")){
                     Intent intent = new Intent(PlanDeAccion.this,StatusHallazgos.class);
@@ -604,7 +647,8 @@ public class PlanDeAccion  extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                textUno.setText("Guardar");
+                btnGuardar.setVisibility(View.VISIBLE);
             }
         }){
             protected Map<String, String> getParams() {

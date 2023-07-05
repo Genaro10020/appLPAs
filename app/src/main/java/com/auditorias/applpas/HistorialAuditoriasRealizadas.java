@@ -33,6 +33,8 @@ import java.util.Map;
 public class HistorialAuditoriasRealizadas extends AppCompatActivity {
     String id_usuario, nombre, tipo_usuario,nomina_auditor;
     Button btnCerrar;
+    TextView texto_auditorias_pendientes;
+    Button btn_auditorias_pendientes;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +43,24 @@ public class HistorialAuditoriasRealizadas extends AppCompatActivity {
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Historial");
 
+        texto_auditorias_pendientes = (TextView)findViewById(R.id.textView2);
+        texto_auditorias_pendientes.setText("Auditorias Pendientes");
+
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
         nomina_auditor = miSession.getString("NUMERO_NOMINA","No existe NUMERO_NOMINA en MiSession");
 
+
+        btn_auditorias_pendientes = (Button)findViewById(R.id.btnHallazgos);
+        btn_auditorias_pendientes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HistorialAuditoriasRealizadas.this,Auditorias.class);
+                startActivity(intent);
+            }
+        });
 
         TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSessionH);
         textViewSession.setText("Usuario: " + nombre +" ("+nomina_auditor+")");

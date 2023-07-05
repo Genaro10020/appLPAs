@@ -45,6 +45,7 @@ public class Auditorias extends AppCompatActivity {
     String nombre;
     String tipo_usuario;
     Button btnCerrar,btnHistorial;
+    TextView texto_auditorias_pendientes;
     //final Context context = getApplicationContext();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +54,9 @@ public class Auditorias extends AppCompatActivity {
         TextView titulo_toolbar =(TextView)findViewById(R.id.titulo_toolbar);
         TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSession) ;
         titulo_toolbar.setText("Auditorías");
+
+        texto_auditorias_pendientes = (TextView)findViewById(R.id.textView2);
+        texto_auditorias_pendientes.setText("Auditorias Pendientes");
 
         btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
         btnCerrar.setOnClickListener(new View.OnClickListener() {
