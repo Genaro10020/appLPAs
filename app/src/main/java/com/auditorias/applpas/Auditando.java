@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -45,7 +48,7 @@ public class Auditando extends AppCompatActivity {
      double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String id_proceso,Codigo,Area,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
+    String id_area, id_proceso,Codigo,Area,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -61,7 +64,9 @@ public class Auditando extends AppCompatActivity {
     RequestQueue queue;
     Button btnGuardar;
 
-
+    int colorClikeado;
+    int colorNoClikeado;
+    Drawable noClickeadoDrawable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +76,7 @@ public class Auditando extends AppCompatActivity {
 
         Intent intent = getIntent();
         Nombre_Auditor = intent.getStringExtra("NOMBRE_AUDITOR");
+        id_area = intent.getStringExtra("ID_AREA");
         id_proceso = intent.getStringExtra("ID_PROCESO");
         Codigo = intent.getStringExtra("CODIGO");
         Area = intent.getStringExtra("AREA");
@@ -337,6 +343,10 @@ public class Auditando extends AppCompatActivity {
                     editPreguntaAbierta = new EditText[cantidad_preguntas];
                     arregloBtnSeleccionado = new String[cantidad_preguntas];
 
+                    // Obtener el color de colors.xml
+                    colorClikeado = ContextCompat.getColor(getApplicationContext(), R.color.clickeado);
+                    colorNoClikeado = ContextCompat.getColor(getApplicationContext(), R.color.noclick);
+
 
                    //Log.e("Largo del los arreglos","Cantidad"+response);
                     for (int i=0; i < arrayPreguntas.length(); i++){
@@ -346,11 +356,11 @@ public class Auditando extends AppCompatActivity {
                         String tipo_boton =jsonObjectPreguntas.getString("tipo_boton");
                         String contable = jsonObjectPreguntas.getString("contable");
 
-
-
                         contableSINO[i] = contable;
 
-
+                        Button botn = new Button(getApplicationContext());
+                        noClickeadoDrawable = botn.getBackground();
+                        noClickeadoDrawable.setColorFilter(colorNoClikeado, PorterDuff.Mode.SRC_IN);
 
 
                         LinearLayout linearLayoutPadre = findViewById(R.id.layout_padre);
@@ -380,6 +390,9 @@ public class Auditando extends AppCompatActivity {
                        if (tipo_boton.equals("Si No y Na")){
                                    arregloBtnSi[i] = new Button(getApplicationContext());
                                    arregloBtnSi[i].setText("SI");
+
+
+
 
                                        arregloEditSi[i] = new EditText(getApplicationContext());
                                        arregloEditSi[i].setTextSize(12);
@@ -435,12 +448,18 @@ public class Auditando extends AppCompatActivity {
 
                                             arregloEditNo[finalI].setText("");
                                             arregloEditNA[finalI].setText("");
-                                            arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                            //arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                             arregloEditNo[finalI].setVisibility(View.GONE);
                                             textView.setVisibility(View.GONE);
                                             arregloEditNA[finalI].setVisibility(View.GONE);
+                                            arregloEditSi[finalI].setText("Respondio SI");
                                             arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
-                                            //respuesta(finalI);
+
+
+                                            arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
+                                            arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
+                                            arregloBtnNA[finalI].setBackground(noClickeadoDrawable);
+
                                         }
                                     });
 
@@ -455,7 +474,11 @@ public class Auditando extends AppCompatActivity {
                                             arregloEditNA[finalI].setVisibility(View.GONE);
                                             arregloEditNo[finalI].setVisibility(View.VISIBLE);
                                             arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
-                                            //respuesta(finalI);
+
+                                            arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
+                                            arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
+                                            arregloBtnNA[finalI].setBackground(noClickeadoDrawable);
+
                                         }
                                     });
 
@@ -470,7 +493,11 @@ public class Auditando extends AppCompatActivity {
                                            textView.setVisibility(View.GONE);
                                            arregloEditNA[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNA[finalI].getText().toString();
-                                           //respuesta(finalI);
+
+                                           arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
+                                           arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
+                                           arregloBtnNA[finalI].setBackgroundColor(colorClikeado);
+
                                        }
                                    });
 
@@ -484,7 +511,7 @@ public class Auditando extends AppCompatActivity {
                                     linearLayoutHijo.addView(arregloEditNo[i]);
                                     linearLayoutHijo.addView(arregloBtnNA[i]);
                                     linearLayoutHijo.addView(arregloEditNA[i]);
-                                    //linearLayoutHijo.addView(boton3);
+
 
                         } else if(tipo_boton.equals("Si y No")){
 
@@ -529,11 +556,16 @@ public class Auditando extends AppCompatActivity {
                                        @Override
                                        public void onClick(View v) {
                                            arregloEditNo[finalI].setText("");
-                                           arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                           //arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                            textView.setVisibility(View.GONE);
+                                           arregloEditSi[finalI].setText("Respondio SI");
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
-                                           //respuesta(finalI);
+
+
+                                           arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
+                                           arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
+
                                        }
                                    });
 
@@ -545,7 +577,9 @@ public class Auditando extends AppCompatActivity {
                                            textView.setVisibility(View.VISIBLE);
                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
-                                           //respuesta(finalI);
+
+                                           arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
+                                           arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
                                        }
                                    });
 
@@ -588,6 +622,7 @@ public class Auditando extends AppCompatActivity {
             protected Map<String, String> getParams(){
                 Map<String, String> params = new HashMap<>();
                 params.put("id_proceso", id_proceso);
+                params.put("id_area", id_area);
                 return params;
             }
         };
@@ -598,7 +633,5 @@ public class Auditando extends AppCompatActivity {
 
     }
 
-    public void respuesta(int respuesta){
-        Log.e("",""+respuesta);
-    }
+
 }

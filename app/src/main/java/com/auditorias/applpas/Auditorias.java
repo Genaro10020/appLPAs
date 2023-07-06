@@ -126,6 +126,7 @@ public class Auditorias extends AppCompatActivity {
 
                                         // posicion de arreglo en objeto para extraer
                                         JSONObject jsonObjectAuditoria = auditoriasArreglo.getJSONObject(i);
+                                        String id_area = jsonObjectAuditoria.getString("id_area");
                                         String id_proceso = jsonObjectAuditoria.getString("id_proceso");
                                         String codigo = jsonObjectAuditoria.getString("codigo");
                                         String area = jsonObjectAuditoria.getString("area");
@@ -197,7 +198,7 @@ public class Auditorias extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                // Log.e("","Precionaste"+id_proceso);
-                                                enviarAuditando(id_proceso,codigo,area,titulo,proceso,responsable,fecha_programada,descripcion,nomina_responsable,num_nomina);
+                                                enviarAuditando(id_area, id_proceso,codigo,area,titulo,proceso,responsable,fecha_programada,descripcion,nomina_responsable,num_nomina);
                                             }
                                         });
 
@@ -246,12 +247,14 @@ public class Auditorias extends AppCompatActivity {
     }
 
 
-   private void enviarAuditando(String id_proceso,String codigo ,String area, String titulo, String proceso,String responsable, String fecha_programada, String descripcion, String nomina_responsable,String nomina_auditor){
+   private void enviarAuditando(String id_area, String id_proceso,String codigo ,String area, String titulo, String proceso,String responsable, String fecha_programada, String descripcion, String nomina_responsable,String nomina_auditor){
         Intent intent = new Intent(Auditorias.this, Auditando.class);
         intent.putExtra("NOMBRE_AUDITOR",nombre);
         intent.putExtra("CODIGO",codigo);
         intent.putExtra("AREA",area);
+        intent.putExtra("ID_AREA",id_area);
         intent.putExtra("ID_PROCESO",id_proceso);
+
         intent.putExtra("TITULO",titulo);
         intent.putExtra("PROCESO",proceso);
         intent.putExtra("NOMINA_AUDITOR",nomina_auditor);

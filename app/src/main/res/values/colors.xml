@@ -8,6 +8,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="clickeado">#D6E6C4</color>
+    <color name="noclick">#F1F1F1</color>
+
+
     <color name="respuestaHallazgo">#C54F29</color><!--color utilizado también para los subtitulos-->
     <color name="calificacion">#009688</color><!--Calificacion-->
 </resources>
