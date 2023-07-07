@@ -455,10 +455,14 @@ public class Auditando extends AppCompatActivity {
                                             arregloEditSi[finalI].setText("Respondio SI");
                                             arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
 
+                                            arregloBtnSi[finalI].setTextColor(Color.WHITE);
+                                            arregloBtnNo[finalI].setTextColor(Color.BLACK);
+                                            arregloBtnNA[finalI].setTextColor(Color.BLACK);
 
                                             arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
                                             arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
                                             arregloBtnNA[finalI].setBackground(noClickeadoDrawable);
+
 
                                         }
                                     });
@@ -474,6 +478,10 @@ public class Auditando extends AppCompatActivity {
                                             arregloEditNA[finalI].setVisibility(View.GONE);
                                             arregloEditNo[finalI].setVisibility(View.VISIBLE);
                                             arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
+
+                                            arregloBtnSi[finalI].setTextColor(Color.BLACK);
+                                            arregloBtnNo[finalI].setTextColor(Color.WHITE);
+                                            arregloBtnNA[finalI].setTextColor(Color.BLACK);
 
                                             arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
                                             arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
@@ -493,6 +501,10 @@ public class Auditando extends AppCompatActivity {
                                            textView.setVisibility(View.GONE);
                                            arregloEditNA[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNA[finalI].getText().toString();
+
+                                           arregloBtnSi[finalI].setTextColor(Color.BLACK);
+                                           arregloBtnNo[finalI].setTextColor(Color.BLACK);
+                                           arregloBtnNA[finalI].setTextColor(Color.WHITE);
 
                                            arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
                                            arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
@@ -562,6 +574,8 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
 
+                                           arregloBtnSi[finalI].setTextColor(Color.WHITE);
+                                           arregloBtnNo[finalI].setTextColor(Color.BLACK);
 
                                            arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
                                            arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
@@ -577,6 +591,9 @@ public class Auditando extends AppCompatActivity {
                                            textView.setVisibility(View.VISIBLE);
                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
+
+                                           arregloBtnSi[finalI].setTextColor(Color.BLACK);
+                                           arregloBtnNo[finalI].setTextColor(Color.WHITE);
 
                                            arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
                                            arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
