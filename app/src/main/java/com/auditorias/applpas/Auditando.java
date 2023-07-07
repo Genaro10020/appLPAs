@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -67,6 +68,7 @@ public class Auditando extends AppCompatActivity {
     int colorClikeado;
     int colorNoClikeado;
     Drawable noClickeadoDrawable;
+    Drawable siClickeadoDrawable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -169,6 +171,17 @@ public class Auditando extends AppCompatActivity {
                                                             contesto="";
                                                             sumaVacias++;
                                                            // Log.e("Pregunta abierta", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
+                                                        }
+                                                    }else if(tipo_boton.equals("Si y No Opcional")){
+
+                                                        if(!arregloEditSi[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditSi[i].getText().toString();
+                                                        }else if(!arregloEditNo[i].getText().toString().isEmpty()){
+                                                            contesto = arregloEditNo[i].getText().toString();
+                                                        }else{
+                                                            contesto="";
+                                                            sumaVacias++;
+                                                            //Log.e("Si y No", "FAVOR CONTESTE LA PREGUNTA"+(i+1));
                                                         }
                                                     }
 
@@ -358,9 +371,14 @@ public class Auditando extends AppCompatActivity {
 
                         contableSINO[i] = contable;
 
-                        Button botn = new Button(getApplicationContext());
+                        Button botn = new Button(getApplicationContext());//creo un boton para tomar la propiedad y despues colocarle un color
                         noClickeadoDrawable = botn.getBackground();
                         noClickeadoDrawable.setColorFilter(colorNoClikeado, PorterDuff.Mode.SRC_IN);
+
+                        Button botn2 = new Button(getApplicationContext());//creo un boton para tomar la propiedad y despues colocarle un color
+                        siClickeadoDrawable = botn2.getBackground();
+                        siClickeadoDrawable.setColorFilter(colorClikeado, PorterDuff.Mode.SRC_IN);
+
 
 
                         LinearLayout linearLayoutPadre = findViewById(R.id.layout_padre);
@@ -376,10 +394,18 @@ public class Auditando extends AppCompatActivity {
 
                         // Crea una nueva instancia de TextView y establece el texto
                         TextView textViewPregunta = new TextView(getApplicationContext());
-                        textViewPregunta.setText(i+1+".-"+pregunta);
+
+                        if(tipo_boton.equals("Si y No Opcional")){
+                            textViewPregunta.setText(i+1+".-"+pregunta+" (Opcional)");
+                        }else{
+                            textViewPregunta.setText(i+1+".-"+pregunta);
+                        }
+
+
 
                         // Configura cualquier otro atributo deseado
                         textViewPregunta.setTextSize(14);
+                        textViewPregunta.setTypeface(null,Typeface.BOLD);
 
 
                         // Agrega el TextView al LinearLayout
@@ -390,7 +416,6 @@ public class Auditando extends AppCompatActivity {
                        if (tipo_boton.equals("Si No y Na")){
                                    arregloBtnSi[i] = new Button(getApplicationContext());
                                    arregloBtnSi[i].setText("SI");
-
 
 
 
@@ -459,7 +484,8 @@ public class Auditando extends AppCompatActivity {
                                             arregloBtnNo[finalI].setTextColor(Color.BLACK);
                                             arregloBtnNA[finalI].setTextColor(Color.BLACK);
 
-                                            arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
+
+                                            arregloBtnSi[finalI].setBackground(siClickeadoDrawable);
                                             arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
                                             arregloBtnNA[finalI].setBackground(noClickeadoDrawable);
 
@@ -483,8 +509,9 @@ public class Auditando extends AppCompatActivity {
                                             arregloBtnNo[finalI].setTextColor(Color.WHITE);
                                             arregloBtnNA[finalI].setTextColor(Color.BLACK);
 
+
                                             arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
-                                            arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
+                                            arregloBtnNo[finalI].setBackground(siClickeadoDrawable);
                                             arregloBtnNA[finalI].setBackground(noClickeadoDrawable);
 
                                         }
@@ -508,7 +535,7 @@ public class Auditando extends AppCompatActivity {
 
                                            arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
                                            arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
-                                           arregloBtnNA[finalI].setBackgroundColor(colorClikeado);
+                                           arregloBtnNA[finalI].setBackground(siClickeadoDrawable);
 
                                        }
                                    });
@@ -577,7 +604,7 @@ public class Auditando extends AppCompatActivity {
                                            arregloBtnSi[finalI].setTextColor(Color.WHITE);
                                            arregloBtnNo[finalI].setTextColor(Color.BLACK);
 
-                                           arregloBtnSi[finalI].setBackgroundColor(colorClikeado);
+                                           arregloBtnSi[finalI].setBackground(siClickeadoDrawable);
                                            arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
 
                                        }
@@ -596,7 +623,7 @@ public class Auditando extends AppCompatActivity {
                                            arregloBtnNo[finalI].setTextColor(Color.WHITE);
 
                                            arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
-                                           arregloBtnNo[finalI].setBackgroundColor(colorClikeado);
+                                           arregloBtnNo[finalI].setBackground(siClickeadoDrawable);
                                        }
                                    });
 
@@ -611,7 +638,89 @@ public class Auditando extends AppCompatActivity {
                            arregloBtnSeleccionado[i] = tipo_boton;
                             editPreguntaAbierta[i] = new EditText(getApplicationContext());
                             linearLayoutHijo.addView(editPreguntaAbierta[i]);
-                        }
+                        }else if(tipo_boton.equals("Si y No Opcional")){
+
+                           arregloBtnSi[i] = new Button(getApplicationContext());
+                           arregloBtnSi[i].setText("SI");
+
+                           arregloEditSi[i] = new EditText(getApplicationContext());
+                           arregloEditSi[i].setTextSize(12);
+                           arregloEditSi[i].setPadding(10,0,10,0);
+                           LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                           parametrosEditSi.setMargins(0,10,0,0);
+                           arregloEditSi[i].setLayoutParams(parametrosEditSi);
+                           arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                           arregloEditSi[i].setHint("Coloque la respuesta");
+                           arregloEditSi[i].setVisibility(View.GONE);
+
+
+                           TextView textView = new TextView(getApplicationContext());
+                           //textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+                           //textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                           textView.setPadding(20,0,0,0);
+                           textView.setVisibility(View.GONE);
+
+
+                           arregloBtnNo[i] = new Button(getApplicationContext());
+                           arregloBtnNo[i].setText("NO");
+
+
+                           arregloEditNo[i] = new EditText(getApplicationContext());
+                           arregloEditNo[i].setTextSize(12);
+                           arregloEditNo[i].setPadding(10,0,10,0);
+                           LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                           parametros.setMargins(0,10,0,0);
+                           arregloEditNo[i].setLayoutParams(parametros);
+                           arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                           arregloEditNo[i].setHint("Coloque la respuesta");
+                           arregloEditNo[i].setVisibility(View.GONE);
+
+                           int finalI = i;
+
+                           arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
+                               @Override
+                               public void onClick(View v) {
+                                   arregloEditNo[finalI].setText("");
+                                   arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                   //textView.setVisibility(View.GONE);
+                                   //arregloEditNo[finalI].setVisibility(View.GONE);
+                                   arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
+
+                                   arregloBtnSi[finalI].setTextColor(Color.WHITE);
+                                   arregloBtnNo[finalI].setTextColor(Color.BLACK);
+
+                                   arregloBtnSi[finalI].setBackground(siClickeadoDrawable);
+                                   arregloBtnNo[finalI].setBackground(noClickeadoDrawable);
+
+                               }
+                           });
+
+                           arregloBtnNo[i].setOnClickListener(new View.OnClickListener() {
+                               @Override
+                               public void onClick(View v) {
+                                   arregloEditNo[finalI].setText("Respondio NO");
+                                   arregloEditSi[finalI].setText("");
+                                   arregloEditSi[finalI].setVisibility(View.GONE);
+                                   //textView.setVisibility(View.VISIBLE);
+                                   //arregloEditNo[finalI].setVisibility(View.VISIBLE);
+                                   arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
+
+                                   arregloBtnSi[finalI].setTextColor(Color.BLACK);
+                                   arregloBtnNo[finalI].setTextColor(Color.WHITE);
+
+                                   arregloBtnSi[finalI].setBackground(noClickeadoDrawable);
+                                   arregloBtnNo[finalI].setBackground(siClickeadoDrawable);
+                               }
+                           });
+
+                           linearLayoutHijo.addView(arregloBtnSi[i]);
+                           linearLayoutHijo.addView(arregloEditSi[i]);
+                           linearLayoutHijo.addView(arregloBtnNo[i]);
+                           linearLayoutHijo.addView(textView);
+                           linearLayoutHijo.addView(arregloEditNo[i]);
+
+
+                       }
 
                         // Agregamos el LinearLayout hijo al LinearLayout padre
                         // Creamos un TextView de separación
