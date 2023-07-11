@@ -74,8 +74,13 @@ public class ResultadoAuditoria extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         consultarAuditoriaCodigo();
+    }
+
+    public void onBackPressed(){// variable RESULT_OK espara que refresque auditorias cuando llegue hay
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 
@@ -129,6 +134,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
         Log.e("Tamanio Arreglo",""+tamanioArreglo);
         LinearLayout linearLayout = findViewById(R.id.layout_padre);
 
+        int contador =1;
         for(int i=0; i < tamanioArreglo;i++){
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -173,14 +179,14 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textoResultado.setTextColor(textColorRojoObscuro);
                linearLayout.addView(textoResultado);
 
-               textViewPregunta.setText((i+1)+".-"+pregunta);
+               textViewPregunta.setText(pregunta);
                textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
 
 
            }
            if(i==1){// muestro la segunda pregunta, que es la pregunta Nombre del evaluado.
-               textViewPregunta.setText((i+1)+".-"+pregunta);
+               textViewPregunta.setText(pregunta);
                textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
            }
@@ -195,7 +201,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
            }
            if(i>=2){
                    if (contable.equals("Si") && btn_seleccionado.equals("NO")){
-                       textViewPregunta.setText((i+1)+".-"+pregunta);
+                       textViewPregunta.setText((contador++)+".-"+pregunta);
                        textViewRespuesta.setTextColor(colorRespuestaHallazgos);
                        textViewRespuesta.setText(respuesta);
                    }

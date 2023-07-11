@@ -46,13 +46,18 @@ public class Auditorias extends AppCompatActivity {
     String tipo_usuario;
     Button btnCerrar,btnHistorial;
     TextView texto_auditorias_pendientes;
+    LinearLayout linearLayoutPadre;
+
     //final Context context = getApplicationContext();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // onBackPresed();//Cuando presione atras volvera a cargar la auditoria.
+
+
         setContentView(R.layout.activity_auditorias);
         TextView titulo_toolbar =(TextView)findViewById(R.id.titulo_toolbar);
-        TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSession) ;
+
         titulo_toolbar.setText("Auditorías");
 
         texto_auditorias_pendientes = (TextView)findViewById(R.id.textView2);
@@ -95,25 +100,37 @@ public class Auditorias extends AppCompatActivity {
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
         num_nomina = miSession.getString("NUMERO_NOMINA","No existe NUMERO_NOMINA en MiSession");
 
+        TextView textViewSession = (TextView)findViewById(R.id.textUsuarioSession) ;
+        textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
+    }
 
+    protected void onResume(){
+        super.onResume();
 
         if(tipo_usuario.equals("Auditor")){
             Log.e("Es Auditor","SI");
-            textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
+
             consultarAuditorias();
-
-        }else{
-            //textViewSession.setText("Usuario: " + nombre +" ("+num_nomina+")");
-            /*Intent intent = new Intent(this,HallazgosResponsable.class);
-            startActivity(intent);
-            finish();*/
         }
-
 
     }
 
+    /*Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            consultarAuditorias();
+        }
+    }*/
+
+
+
     //CONSULTA LAS AUDITORÍAS DEL ID_AUDITOR CORRESPONDIENTE.
     private void consultarAuditorias(){
+
+        linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+        linearLayoutPadre.removeAllViews(); // Limpiar vistas anteriores
+
         String url = "https://vvnorth.com/lpa/app/consultarAuditorias.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
@@ -141,7 +158,7 @@ public class Auditorias extends AppCompatActivity {
 
 
                                         // Obtenemos el LinearLayout padre
-                                        LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+                                        linearLayoutPadre = findViewById(R.id.layoutPrincipal);
 
                                         // Creamos el LinearLayout hijo
                                         LinearLayout linearLayoutHijo = new LinearLayout(this);
@@ -262,6 +279,7 @@ public class Auditorias extends AppCompatActivity {
         intent.putExtra("RESPONSABLE",responsable);
         intent.putExtra("FECHA_PROGRAMADA",fecha_programada);
         intent.putExtra("DESCRIPCION",descripcion);
-        startActivity(intent);
+        //startActivity(intent);
+        startActivityForResult(intent, 1);
    }
 }

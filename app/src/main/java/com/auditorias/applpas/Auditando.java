@@ -90,7 +90,6 @@ public class Auditando extends AppCompatActivity {
         Fecha_Programada = intent.getStringExtra("FECHA_PROGRAMADA");
         Descripcion = intent.getStringExtra("DESCRIPCION");
 
-        ;
 
 
         LinearLayout layoutBtnDos = (LinearLayout)findViewById(R.id.layoutBtnDos);
@@ -243,6 +242,9 @@ public class Auditando extends AppCompatActivity {
                 });
     }
 
+
+
+
     class ObjetoRespuesta {
         String pregunta;
         String respuesta;
@@ -277,6 +279,7 @@ public class Auditando extends AppCompatActivity {
                                 Intent intent = new Intent (getApplicationContext(), ResultadoAuditoria.class);
                                 intent.putExtra("CODIGO",Codigo);
                                 startActivity(intent);
+                                finish();
                             }
 
                         } catch (JSONException e) {
