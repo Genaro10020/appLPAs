@@ -133,7 +133,9 @@ public class Auditando extends AppCompatActivity {
                                                         }
 
                                                         if(!arregloEditSi[i].getText().toString().isEmpty()){
-                                                            CantidadRespuestasSI++;
+                                                            if(contableSINO[i].equals("Si")){//Si no es contable y contesta si que la sume a cantidad de si
+                                                                CantidadRespuestasSI++;
+                                                            }
                                                             contesto = arregloEditSi[i].getText().toString();
                                                         }else if(!arregloEditNo[i].getText().toString().isEmpty()){
                                                             CantidadRespuestasNO++;
@@ -153,7 +155,9 @@ public class Auditando extends AppCompatActivity {
                                                         }
 
                                                         if(!arregloEditSi[i].getText().toString().isEmpty()){
-                                                            CantidadRespuestasSI++;
+                                                            if(contableSINO[i].equals("Si")){//Si no es contable y contesta si que la sume a cantidad de si
+                                                                CantidadRespuestasSI++;
+                                                            }
                                                             contesto = arregloEditSi[i].getText().toString();
                                                         }else if(!arregloEditNo[i].getText().toString().isEmpty()){
                                                             CantidadRespuestasNO++;

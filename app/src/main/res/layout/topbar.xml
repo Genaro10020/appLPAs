@@ -20,7 +20,7 @@
             android:id="@+id/imageView4"
             android:layout_width="78dp"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/logo5s"
+            app:srcCompat="@drawable/logo_gonher"
             android:background="@drawable/fondo_logo" />
 
         <TextView

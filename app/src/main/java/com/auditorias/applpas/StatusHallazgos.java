@@ -146,11 +146,11 @@ public class StatusHallazgos extends AppCompatActivity {
 
 
 
-                        textFecha.setText(Html.fromHtml("<b>Fecha del hallázgo: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
+                        textFecha.setText(Html.fromHtml("<b>Fecha del Hallazgo: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
                         textColaborador.setText(Html.fromHtml("<b>Colaborador: </b>" +nombre_evaluado+" ("+objetoDentroArregloHallazgos.getString("nomina_evaluado")+")"));
                         textPregunta.setText(Html.fromHtml("<b>Pregunta: </b>" + objetoDentroArregloHallazgos.getString("pregunta")));
                         textRespuesta.setText(Html.fromHtml("<b>Respuesta: </b>" + objetoDentroArregloHallazgos.getString("respuesta")));
-                        textCodigoHallazgo.setText(Html.fromHtml("<b>Código de Hállazgo: </b>" + id_hallazgo));
+                        textCodigoHallazgo.setText(Html.fromHtml("<b>Código de Hallazgo: </b>" + id_hallazgo));
 
 
                         if(objetoDentroArregloHallazgos.getString("status_hallazgos").equals("Rechazada")){

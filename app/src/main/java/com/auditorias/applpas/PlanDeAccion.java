@@ -168,7 +168,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                             calendarView = findViewById(R.id.fechaCompromiso);
                             if (status_hallazgo.equals("Pendiente Plan")){
                                         titulo.setText("Plan de Acción");
-                                        subtitulo.setText("Favor de crear tu plan de acción,ID hallázgo: "+id_hallazgo+".");
+                                        subtitulo.setText("Favor de crear tu plan de acción,ID Hallazgo: "+id_hallazgo+".");
                                         // Obtén la fecha actual
                                         calendar = Calendar.getInstance();
                                         currentDate = calendar.getTimeInMillis();
@@ -210,10 +210,10 @@ public class PlanDeAccion  extends AppCompatActivity {
                             }else if(status_hallazgo.equals("Pendiente Evidencia") || status_hallazgo.equals("Rechazada")){
                                         if(status_hallazgo.equals("Pendiente Evidencia")){
                                             titulo.setText("Evidencia");
-                                            subtitulo.setText("Subir evidencia puede ser, fotografía, imágen o pdf, ID hallázgo: "+id_hallazgo+".");
+                                            subtitulo.setText("Subir evidencia puede ser, fotografía, imágen o pdf, ID Hallazgo: "+id_hallazgo+".");
                                         }else if(status_hallazgo.equals("Rechazada")){
                                             titulo.setText("Rechazada");
-                                            subtitulo.setText("Favor de subir evidencia corregida, ID hallázgo: "+id_hallazgo+".");
+                                            subtitulo.setText("Favor de subir evidencia corregida, ID Hallazgo: "+id_hallazgo+".");
                                         }
 
 
@@ -297,10 +297,10 @@ public class PlanDeAccion  extends AppCompatActivity {
                                     }else if(status_hallazgo.equals("Pendiente Aprobación") || status_hallazgo.equals("Finalizado")){
                                             if(status_hallazgo.equals("Pendiente Aprobación")){
                                                 titulo.setText("Aprobación");
-                                                subtitulo.setText("Espere a que sea aprobada o rechazada, ID hallázgo: "+id_hallazgo+".");
+                                                subtitulo.setText("Espere a que sea aprobada o rechazada, ID Hallazgo: "+id_hallazgo+".");
                                             }else if(status_hallazgo.equals("Finalizado")){
                                                 titulo.setText("Finalizado");
-                                                subtitulo.setText("Este hallázgo finalizo con éxito, ID hallázgo: "+id_hallazgo+".");
+                                                subtitulo.setText("Este hallazgo finalizo con éxito, ID Hallazgo: "+id_hallazgo+".");
                                              }
 
 

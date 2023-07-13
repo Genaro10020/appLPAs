@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -47,7 +48,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
     int tamanioArreglo;
     JSONArray arregloConsulta;
     Button btnCerrar;
-
+    Button btnEnviarCorreo;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,30 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Resultado");
+
+        Button btnHallazgos = (Button)findViewById(R.id.btnHallazgos);
+        btnHallazgos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
+                startActivity(intent);
+            }
+        });
+
+
+        TextView textAuditorias = (TextView)findViewById(R.id.textView2);
+        textAuditorias.setText("Auditorías Pendientes");
+
+
+        Button btnHistorial = (Button)findViewById(R.id.btnHistorial);
+        btnHistorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ResultadoAuditoria.this,HistorialAuditoriasRealizadas.class);
+                startActivity(intent);
+            }
+        });
+
 
         btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
         btnCerrar.setOnClickListener(new View.OnClickListener() {
@@ -161,8 +186,10 @@ public class ResultadoAuditoria extends AppCompatActivity {
             String pregunta = objeto.getString("pregunta");
             String respuesta = objeto.getString("respuesta");
             String contable = objeto.getString("contable");
+            String tipo_de_boton = objeto.getString("btn_tipo");
             String btn_seleccionado = objeto.getString("btn_seleccionado");
             String Calificacion = objeto.getString("calificacion");
+
 
             TextView textViewPregunta = new TextView(this);
             TextView textViewRespuesta = new TextView(this);
@@ -200,11 +227,14 @@ public class ResultadoAuditoria extends AppCompatActivity {
                linearLayout.addView(textViewHallazgos);
            }
            if(i>=2){
+               if (tipo_de_boton.equals("Si No y Na") || tipo_de_boton.equals("Si y No")){
                    if (contable.equals("Si") && btn_seleccionado.equals("NO")){
                        textViewPregunta.setText((contador++)+".-"+pregunta);
                        textViewRespuesta.setTextColor(colorRespuestaHallazgos);
                        textViewRespuesta.setText(respuesta);
                    }
+               }
+
            }
 
            if (tamanioArreglo-1 == i){
@@ -227,19 +257,22 @@ public class ResultadoAuditoria extends AppCompatActivity {
                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
                layoutParams.gravity = Gravity.CENTER;
 
-               Button btnMisAuditorias = new Button(this);
-               btnMisAuditorias.setText("Mis Auditorias");
-               btnMisAuditorias.setLayoutParams(layoutParams);
-               btnMisAuditorias.setPadding(10, 0, 10, 0);
-               btnMisAuditorias.setTextColor(Color.WHITE);
-               btnMisAuditorias.setBackgroundResource(R.drawable.boton_entrar);
+               btnEnviarCorreo = new Button(this);
+               btnEnviarCorreo.setText("Enviar Correo");
+               btnEnviarCorreo.setLayoutParams(layoutParams);
+               btnEnviarCorreo.setPadding(10, 0, 10, 0);
+               btnEnviarCorreo.setTextColor(Color.WHITE);
+               btnEnviarCorreo.setBackgroundResource(R.drawable.boton_entrar);
 
-               linearLayout.addView(btnMisAuditorias);
-               btnMisAuditorias.setOnClickListener(new View.OnClickListener() {
+               linearLayout.addView(btnEnviarCorreo);
+               btnEnviarCorreo.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                       Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
-                       startActivity(intent);
+                       /*Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
+                       startActivity(intent);*/
+                       btnEnviarCorreo.setEnabled(false);
+                       btnEnviarCorreo.setText("Enviando...");
+                       enviarCorreoAuditoria();
                    }
                });
            }
@@ -248,5 +281,35 @@ public class ResultadoAuditoria extends AppCompatActivity {
            linearLayout.addView(textViewRespuesta);
 
         }
+    }
+
+    public void enviarCorreoAuditoria(){
+        String url = "https://vvnorth.com/lpa/app/enviarCorreoAuditoria.php";
+        StringRequest respuesta = new StringRequest(Request.Method.POST, url, response -> {
+            Log.e("enviarCorreoAuditoria",""+response);
+            if(response.equals("Enviado")){
+                btnEnviarCorreo.setEnabled(false);
+                btnEnviarCorreo.setText("CORREO ENVIADO");
+                btnEnviarCorreo.setBackgroundResource(R.drawable.boton_enviado);
+            }else{
+                Toast.makeText(getApplicationContext(), "Intentalo nuevamente, de lo contrario reportalo.", Toast.LENGTH_SHORT).show();
+                btnEnviarCorreo.setEnabled(true);
+                btnEnviarCorreo.setText("Enviar Correo");
+            }
+
+        }, error -> {
+            btnEnviarCorreo.setEnabled(true);
+            btnEnviarCorreo.setText("Enviar Correo");
+            Toast.makeText(getApplicationContext(), "Error :-( intente nuevamente", Toast.LENGTH_SHORT).show();
+        }){
+            protected Map<String,String> getParams(){
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("Codigo",Codigo);
+                return parametros;
+            }
+        };
+
+        RequestQueue solicitud = Volley.newRequestQueue(this);
+        solicitud.add(respuesta);
     }
 }
