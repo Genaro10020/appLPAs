@@ -168,22 +168,24 @@ public class Auditorias extends AppCompatActivity {
                                         linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_auditorias));
 
                                         // Creamos las cuatro líneas de texto
-                                        for (int j = 0; j < 6; j++) {
+                                        for (int j = 0; j < 7; j++) {
                                             TextView textView = new TextView(this);
                                             textView.setPadding(20, 0, 0, 0);
                                             if (j + 1 == 1) {
                                                 //textView.setTextSize(18);
                                                 //textView.setTypeface(null, Typeface.BOLD);
                                                 textView.setText(Html.fromHtml("<b>Titulo:</b> " + jsonObjectAuditoria.getString("titulo")));
-                                            } else if (j + 1 == 2) {
-                                                textView.setText(Html.fromHtml("<b>Proceso:</b> " + jsonObjectAuditoria.getString("proceso")));
+                                            }else if (j + 1 == 2) {
+                                                textView.setText(Html.fromHtml("<b>Área:</b> " + jsonObjectAuditoria.getString("area")));
                                             } else if (j + 1 == 3) {
-                                                textView.setText(Html.fromHtml("<b>Responsable:</b>" + jsonObjectAuditoria.getString("responsable")));
+                                                textView.setText(Html.fromHtml("<b>Proceso:</b> " + jsonObjectAuditoria.getString("proceso")));
                                             } else if (j + 1 == 4) {
-                                            textView.setText(Html.fromHtml("<b>Fecha programada:</b>" + jsonObjectAuditoria.getString("fecha")));
+                                                textView.setText(Html.fromHtml("<b>Responsable:</b>" + jsonObjectAuditoria.getString("responsable")));
                                             } else if (j + 1 == 5) {
-                                                textView.setText(Html.fromHtml("<b>Descripción:</b>" + jsonObjectAuditoria.getString("descripcion")));
+                                            textView.setText(Html.fromHtml("<b>Fecha programada:</b>" + jsonObjectAuditoria.getString("fecha")));
                                             } else if (j + 1 == 6) {
+                                                textView.setText(Html.fromHtml("<b>Descripción:</b>" + jsonObjectAuditoria.getString("descripcion")));
+                                            } else if (j + 1 == 7) {
                                                 textView.setPadding(20, 0, 0, 20);
                                                 textView.setText(Html.fromHtml("<b>Código:</b>"+codigo));
                                             }

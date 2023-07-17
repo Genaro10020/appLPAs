@@ -232,7 +232,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                                         Calendar calendarBD = Calendar.getInstance();
                                         // Establece la fecha en el objeto Calendar
                                         calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
-                                        calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                        calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)-1); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
                                         calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
                                         calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
                                         // Establecer fecha mínima
@@ -325,7 +325,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                                             Calendar calendarBD = Calendar.getInstance();
                                             // Establece la fecha en el objeto Calendar
                                             calendarBD.set(Calendar.YEAR, Integer.parseInt(anio)); // Año
-                                            calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
+                                            calendarBD.set(Calendar.MONTH, Integer.parseInt(mes)-1); // Mes (ten en cuenta que los meses se numeran desde 0, por lo que JUNE es 5)
                                             calendarBD.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dia)); // Día
                                             calendarView.setDate(calendarBD.getTimeInMillis(), true, true);
                                             // Establecer fecha mínima
@@ -694,6 +694,10 @@ public class PlanDeAccion  extends AppCompatActivity {
                         intento.putExtra("CODIGO",codigo_auditoria);
                         startActivity(intento);
 
+                        // Comprobar que StatusHallazgos se haya iniciado correctamente antes de cerrar esta actividad
+                        if (intento.resolveActivity(getPackageManager()) != null) {
+                            finish();// Evita regresar con el botón "Atrás" a esta actividad
+                        }
                     }else{
                         Toast.makeText(getApplicationContext(), "Al parecer, no se guardaron los datos.", Toast.LENGTH_SHORT).show();
                     }

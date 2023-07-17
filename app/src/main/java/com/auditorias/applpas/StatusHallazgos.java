@@ -85,6 +85,13 @@ public class StatusHallazgos extends AppCompatActivity {
 
     }
 
+    public void onRestart(){
+        super.onRestart();
+        LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+        linearLayoutPadre.removeAllViews();
+        statusHallazgos();
+    }
+
 
     public void statusHallazgos(){
         String url = "https://vvnorth.com/lpa/app/statusHallazgos.php";
@@ -250,6 +257,10 @@ public class StatusHallazgos extends AppCompatActivity {
                             intent.putExtra("NOMBRE_EVALUADO",nombre_evaluado);
                             intent.putExtra("CODIGO_AUDITORIA",Codigo);
                             startActivity(intent);
+                                // Comprobar que PlanDeAccion se haya iniciado correctamente antes de cerrar esta actividad
+                                if (intent.resolveActivity(getPackageManager()) != null) {
+                                    finish();// Evita regresar con el botón "Atrás" a esta actividad
+                                }
                         });
 
                         linearLayoutHijo.addView(textFecha);

@@ -12,7 +12,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,9 +27,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +76,19 @@ public class HallazgosResponsable extends AppCompatActivity {
 
         consultarHallazgosEnAuditorias();
     }
+
+    public void onRestart() {
+        super.onRestart();
+        LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+        linearLayoutPadre.removeAllViews();//Elimina las vista para volver a cargar
+        consultarHallazgosEnAuditorias();
+    }
+
+    /*public void onBackPressed() {
+        LinearLayout linearLayoutPadre = findViewById(R.id.layoutPrincipal);
+        linearLayoutPadre.removeAllViews(); // Elimina todos los hijos del LinearLayout padre
+        consultarHallazgosEnAuditorias(); // Vuelve a consultar y cargar los hallazgos
+    }*/
 
 
     public void consultarHallazgosEnAuditorias(){
@@ -131,7 +141,7 @@ public class HallazgosResponsable extends AppCompatActivity {
                         btnVerHallazgos.setPadding(10, 0, 10, 0);
                         btnVerHallazgos.setTextColor(Color.WHITE);
                         btnVerHallazgos.setTextSize(12);
-                        btnVerHallazgos.setText("Status Hallazgo/s");
+                        btnVerHallazgos.setText("Estatus Hallazgo/s");
                         btnVerHallazgos.setBackgroundResource(R.drawable.fondo_btn);
 
                         btnVerHallazgos.setOnClickListener(new View.OnClickListener() {

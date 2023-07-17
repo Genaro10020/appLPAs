@@ -100,7 +100,7 @@ public class Login extends AppCompatActivity {
 
 
                         }, error -> {
-                            Toast.makeText(getApplicationContext(), "Error :-(", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Error :-(, Verifique la Conexión.", Toast.LENGTH_SHORT).show();
                 }) {
                     @Override
                     protected Map<String, String> getParams() {

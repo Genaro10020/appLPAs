@@ -438,7 +438,7 @@ public class Auditando extends AppCompatActivity {
 
 
                                        TextView textView = new TextView(getApplicationContext());
-                                       textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar E-MI-CC");
+                                       textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar.");
                                        textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
                                        textView.setPadding(20,0,0,0);
                                        textView.setVisibility(View.GONE);
@@ -576,7 +576,7 @@ public class Auditando extends AppCompatActivity {
 
 
                                    TextView textView = new TextView(getApplicationContext());
-                                   textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
+                                   textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar.");
                                    textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
                                    textView.setPadding(20,0,0,0);
                                    textView.setVisibility(View.GONE);

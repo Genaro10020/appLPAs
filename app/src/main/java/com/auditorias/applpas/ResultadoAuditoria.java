@@ -167,9 +167,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
             LinearLayout.LayoutParams paramsRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
 
-
             params.setMargins(10,0,10,10);
-            paramsHallazgo.setMargins(20,0,10,10);
+            paramsHallazgo.setMargins(20,10,10,0);
             paramsRespuesta.setMargins(10,1,10,5);
 
 
@@ -193,7 +192,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
             TextView textViewPregunta = new TextView(this);
             TextView textViewRespuesta = new TextView(this);
-            textViewRespuesta.setLayoutParams(paramsRespuesta);
+
 
 
 
@@ -209,6 +208,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textViewPregunta.setText(pregunta);
                textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
+               linearLayout.addView(textViewPregunta);
+               linearLayout.addView(textViewRespuesta);
 
 
            }
@@ -216,6 +217,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textViewPregunta.setText(pregunta);
                textViewRespuesta.setTypeface(null, Typeface.BOLD);
                textViewRespuesta.setText(respuesta);
+               linearLayout.addView(textViewPregunta);
+               linearLayout.addView(textViewRespuesta);
            }
            if (i==2){
                TextView textViewHallazgos = new TextView(this);//AGREGO EL TITULO HALLAZGOS
@@ -225,6 +228,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textViewHallazgos.setLayoutParams(paramsHallazgo);
                textViewHallazgos.setTextColor(textColorRojoObscuro);
                linearLayout.addView(textViewHallazgos);
+               linearLayout.addView(textViewPregunta);
+               linearLayout.addView(textViewRespuesta);
            }
            if(i>=2){
                if (tipo_de_boton.equals("Si No y Na") || tipo_de_boton.equals("Si y No")){
@@ -232,6 +237,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
                        textViewPregunta.setText((contador++)+".-"+pregunta);
                        textViewRespuesta.setTextColor(colorRespuestaHallazgos);
                        textViewRespuesta.setText(respuesta);
+                       linearLayout.addView(textViewPregunta);
+                       linearLayout.addView(textViewRespuesta);
                    }
                }
 
@@ -242,6 +249,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
                TextView numCalificacion = new TextView(this);
                textCalificacion.setTextSize(30);
                textCalificacion.setGravity(Gravity.CENTER);
+               textCalificacion.setPadding(0,20,0,0);
                textCalificacion.setText("Calificación: ");
 
                numCalificacion.setTextColor(numcolorCalificacion);
@@ -277,8 +285,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
                });
            }
 
-           linearLayout.addView(textViewPregunta);
-           linearLayout.addView(textViewRespuesta);
+
 
         }
     }
