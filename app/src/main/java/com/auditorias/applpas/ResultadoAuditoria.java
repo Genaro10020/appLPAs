@@ -161,6 +161,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
         int contador =1;
         for(int i=0; i < tamanioArreglo;i++){
+            TextView textViewPregunta = new TextView(this);
+            TextView textViewRespuesta = new TextView(this);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             LinearLayout.LayoutParams paramsHallazgo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -190,8 +192,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
             String Calificacion = objeto.getString("calificacion");
 
 
-            TextView textViewPregunta = new TextView(this);
-            TextView textViewRespuesta = new TextView(this);
+
 
 
 
@@ -228,8 +229,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
                textViewHallazgos.setLayoutParams(paramsHallazgo);
                textViewHallazgos.setTextColor(textColorRojoObscuro);
                linearLayout.addView(textViewHallazgos);
-               linearLayout.addView(textViewPregunta);
-               linearLayout.addView(textViewRespuesta);
+               //linearLayout.addView(textViewPregunta);
+               //linearLayout.addView(textViewRespuesta);
            }
            if(i>=2){
                if (tipo_de_boton.equals("Si No y Na") || tipo_de_boton.equals("Si y No")){
