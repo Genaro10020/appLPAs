@@ -162,6 +162,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
         int contador =1;
         for(int i=0; i < tamanioArreglo;i++){
             TextView textViewPregunta = new TextView(this);
+            textViewPregunta.setPadding(0,20,0,0);
             TextView textViewRespuesta = new TextView(this);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -185,14 +186,12 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
             JSONObject objeto = arregloConsulta.getJSONObject(i);
             String pregunta = objeto.getString("pregunta");
+            String numpregunta = objeto.getString("num_pregunta");
             String respuesta = objeto.getString("respuesta");
             String contable = objeto.getString("contable");
             String tipo_de_boton = objeto.getString("btn_tipo");
             String btn_seleccionado = objeto.getString("btn_seleccionado");
             String Calificacion = objeto.getString("calificacion");
-
-
-
 
 
 
@@ -235,9 +234,9 @@ public class ResultadoAuditoria extends AppCompatActivity {
            if(i>=2){
                if (tipo_de_boton.equals("Si No y Na") || tipo_de_boton.equals("Si y No")){
                    if (contable.equals("Si") && btn_seleccionado.equals("NO")){
-                       textViewPregunta.setText((contador++)+".-"+pregunta);
+                       textViewPregunta.setText("Hallazgo #"+(contador++)+"\n"+numpregunta+".-"+pregunta);
                        textViewRespuesta.setTextColor(colorRespuestaHallazgos);
-                       textViewRespuesta.setText(respuesta);
+                       textViewRespuesta.setText("R = "+respuesta);
                        linearLayout.addView(textViewPregunta);
                        linearLayout.addView(textViewRespuesta);
                    }
@@ -269,7 +268,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
                btnEnviarCorreo = new Button(this);
                btnEnviarCorreo.setText("Enviar Correo");
                btnEnviarCorreo.setLayoutParams(layoutParams);
-               btnEnviarCorreo.setPadding(10, 0, 10, 0);
+               btnEnviarCorreo.setPadding(10, 0, 10, 50);
                btnEnviarCorreo.setTextColor(Color.WHITE);
                btnEnviarCorreo.setBackgroundResource(R.drawable.boton_entrar);
 

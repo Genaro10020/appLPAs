@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -378,6 +379,14 @@ public class Auditando extends AppCompatActivity {
 
                         contableSINO[i] = contable;
 
+                        // Establecer los pesos para los botones
+                        int anchoEspecifico = 350;
+                        LinearLayout.LayoutParams distribuirAncho = new LinearLayout.LayoutParams(anchoEspecifico, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        LinearLayout.LayoutParams distribuirBTN = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        distribuirBTN.weight = 1;
+
+
                         Button botn = new Button(getApplicationContext());//creo un boton para tomar la propiedad y despues colocarle un color
                         noClickeadoDrawable = botn.getBackground();
                         noClickeadoDrawable.setColorFilter(colorNoClikeado, PorterDuff.Mode.SRC_IN);
@@ -395,12 +404,20 @@ public class Auditando extends AppCompatActivity {
                         LinearLayout linearLayoutHijo = new LinearLayout(getApplicationContext());
                         linearLayoutHijo.setOrientation(LinearLayout.VERTICAL);
 
+                        LinearLayout linearLayoutNieto = new LinearLayout(getApplicationContext());
+                        linearLayoutNieto.setOrientation(LinearLayout.HORIZONTAL);
+                        linearLayoutNieto.setGravity(Gravity.CENTER_HORIZONTAL);
+
+
+
+
                         // Agregamos el fondo drawable al LinearLayout hijo
                         linearLayoutHijo.setBackground(getResources().getDrawable(R.drawable.fondo_lista_preguntas));
 
 
                         // Crea una nueva instancia de TextView y establece el texto
                         TextView textViewPregunta = new TextView(getApplicationContext());
+                        textViewPregunta.setPadding(10,0,0,0);
 
                         if(tipo_boton.equals("Si y No Opcional")){
                             textViewPregunta.setText(i+1+".-"+pregunta+" (Opcional)");
@@ -417,20 +434,25 @@ public class Auditando extends AppCompatActivity {
 
                         // Agrega el TextView al LinearLayout
                         linearLayoutHijo.addView(textViewPregunta);
-                        linearLayoutHijo.setPadding(50, 10, 50, 10);
+                        //linearLayoutHijo.setPadding(50, 10, 50, 10);
 
 
                        if (tipo_boton.equals("Si No y Na")){
-                                   arregloBtnSi[i] = new Button(getApplicationContext());
-                                   arregloBtnSi[i].setText("SI");
+                           LinearLayout.LayoutParams parametrostextViewRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                           parametrostextViewRespuesta.weight = 1;
+                           parametrostextViewRespuesta.setMargins(20,0,0,0);
 
+                                   arregloBtnSi[i] = new Button(getApplicationContext());
+                                   arregloBtnSi[i].setLayoutParams(distribuirBTN);//distribucion equitativa en layout
+                                   arregloBtnSi[i].setText("SI");
+                                   arregloBtnSi[i].setLayoutParams(distribuirAncho);//ancho fijo
 
 
                                        arregloEditSi[i] = new EditText(getApplicationContext());
                                        arregloEditSi[i].setTextSize(12);
                                        arregloEditSi[i].setPadding(10,0,10,0);
                                        LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                                       parametrosEditSi.setMargins(0,10,0,0);
+                                       parametrosEditSi.setMargins(20,10,0,20);
                                        arregloEditSi[i].setLayoutParams(parametrosEditSi);
                                        arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
                                        arregloEditSi[i].setHint("Coloque la respuesta");
@@ -440,34 +462,42 @@ public class Auditando extends AppCompatActivity {
                                        TextView textView = new TextView(getApplicationContext());
                                        textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar.");
                                        textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
-                                       textView.setPadding(20,0,0,0);
+                                       LinearLayout.LayoutParams parametrostextView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                                       parametrostextView.weight = 1;
+                                       parametrostextView.setMargins(20,0,0,20);
+                                       parametrostextView.gravity = Gravity.CENTER_VERTICAL;
+                                       //textView.setPadding(20,0,0,0);
+                                       textView.setLayoutParams(parametrostextView);
                                        textView.setVisibility(View.GONE);
 
 
                                    arregloBtnNo[i] = new Button(getApplicationContext());
+                                   arregloBtnNo[i].setLayoutParams(distribuirBTN);
                                    arregloBtnNo[i].setText("NO");
+                                   arregloBtnNo[i].setLayoutParams(distribuirAncho);//ancho fijo
 
 
                                        arregloEditNo[i] = new EditText(getApplicationContext());
                                        arregloEditNo[i].setTextSize(12);
-                                       arregloEditNo[i].setPadding(10,0,10,0);
                                        LinearLayout.LayoutParams parametrosEditNo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                                       parametrosEditNo.setMargins(0,10,0,0);
+                                       parametrosEditNo.setMargins(20,10,0,20);
                                        arregloEditNo[i].setLayoutParams(parametrosEditNo);
                                        arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                                       arregloEditNo[i].setLayoutParams(parametrostextViewRespuesta);
                                        arregloEditNo[i].setHint("Coloque la respuesta");
                                        arregloEditNo[i].setVisibility(View.GONE);
 
 
                                    arregloBtnNA[i] = new Button(getApplicationContext());
+                                   arregloBtnNA[i].setLayoutParams(distribuirBTN);
                                    arregloBtnNA[i].setText("N/A");
+                                   arregloBtnNA[i].setLayoutParams(distribuirAncho);//ancho fijo
 
                                        arregloEditNA[i] = new EditText(getApplicationContext());
                                        arregloEditNA[i].setTextSize(12);
-                                       arregloEditNA[i].setPadding(10,0,10,0);
-                                       LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                                       parametros.setMargins(0,10,0,0);
-                                       arregloEditNA[i].setLayoutParams(parametros);
+                                       LinearLayout.LayoutParams parametrosEditNA = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                                       parametrosEditNA.setMargins(20,10,0,20);
+                                       arregloEditNA[i].setLayoutParams(parametrosEditNA);
                                        arregloEditNA[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
                                        arregloEditNA[i].setHint("Coloque la respuesta");
                                        arregloEditNA[i].setVisibility(View.GONE);
@@ -550,51 +580,71 @@ public class Auditando extends AppCompatActivity {
 
 
                                     // Agrega los tres botones al LinearLayout hijo
-                                    linearLayoutHijo.addView(arregloBtnSi[i]);
-                                    linearLayoutHijo.addView(arregloEditSi[i]);
-                                    linearLayoutHijo.addView(arregloBtnNo[i]);
-                                    linearLayoutHijo.addView(textView);
-                                    linearLayoutHijo.addView(arregloEditNo[i]);
-                                    linearLayoutHijo.addView(arregloBtnNA[i]);
-                                    linearLayoutHijo.addView(arregloEditNA[i]);
+
+
+
+
+                                   linearLayoutNieto.addView(arregloBtnSi[i]);
+                                   linearLayoutNieto.addView(arregloBtnNo[i]);
+                                   linearLayoutNieto.addView(arregloBtnNA[i]);
+                                   linearLayoutHijo.addView(linearLayoutNieto);
+
+                                   linearLayoutHijo.addView(arregloEditNo[i]);
+                                   linearLayoutHijo.addView(arregloEditSi[i]);
+                                   linearLayoutHijo.addView(textView);
+                                   linearLayoutHijo.addView(arregloEditNA[i]);
 
 
                         } else if(tipo_boton.equals("Si y No")){
 
-                                   arregloBtnSi[i] = new Button(getApplicationContext());
-                                   arregloBtnSi[i].setText("SI");
+                           LinearLayout.LayoutParams parametrostextViewRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                           parametrostextViewRespuesta.weight = 1;
+                           parametrostextViewRespuesta.setMargins(20,0,0,0);
 
-                                   arregloEditSi[i] = new EditText(getApplicationContext());
-                                   arregloEditSi[i].setTextSize(12);
-                                   arregloEditSi[i].setPadding(10,0,10,0);
-                                   LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                                   parametrosEditSi.setMargins(0,10,0,0);
-                                   arregloEditSi[i].setLayoutParams(parametrosEditSi);
-                                   arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
-                                   arregloEditSi[i].setHint("Coloque la respuesta");
-                                   arregloEditSi[i].setVisibility(View.GONE);
+                           arregloBtnSi[i] = new Button(getApplicationContext());
+                           arregloBtnSi[i].setLayoutParams(distribuirBTN);
+                           arregloBtnSi[i].setText("SI");
+                           arregloBtnSi[i].setLayoutParams(distribuirAncho);//ancho fijo
 
 
-                                   TextView textView = new TextView(getApplicationContext());
-                                   textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar.");
-                                   textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
-                                   textView.setPadding(20,0,0,0);
-                                   textView.setVisibility(View.GONE);
+                           arregloEditSi[i] = new EditText(getApplicationContext());
+                           arregloEditSi[i].setTextSize(12);
+                           arregloEditSi[i].setPadding(10,0,10,0);
+                           LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                           parametrosEditSi.setMargins(20,10,0,20);
+                           arregloEditSi[i].setLayoutParams(parametrosEditSi);
+                           arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                           arregloEditSi[i].setHint("Coloque la respuesta");
+                           arregloEditSi[i].setVisibility(View.GONE);
 
 
-                                   arregloBtnNo[i] = new Button(getApplicationContext());
-                                   arregloBtnNo[i].setText("NO");
+                           TextView textView = new TextView(getApplicationContext());
+                           textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar.");
+                           textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                           LinearLayout.LayoutParams parametrostextView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                           parametrostextView.weight = 1;
+                           parametrostextView.setMargins(20,0,0,20);
+                           parametrostextView.gravity = Gravity.CENTER_VERTICAL;
+                           //textView.setPadding(20,0,0,0);
+                           textView.setLayoutParams(parametrostextView);
+                           textView.setVisibility(View.GONE);
 
 
-                                   arregloEditNo[i] = new EditText(getApplicationContext());
-                                   arregloEditNo[i].setTextSize(12);
-                                   arregloEditNo[i].setPadding(10,0,10,0);
-                                   LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                                   parametros.setMargins(0,10,0,0);
-                                   arregloEditNo[i].setLayoutParams(parametros);
-                                   arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
-                                   arregloEditNo[i].setHint("Coloque la respuesta");
-                                   arregloEditNo[i].setVisibility(View.GONE);
+                           arregloBtnNo[i] = new Button(getApplicationContext());
+                           arregloBtnNo[i].setLayoutParams(distribuirBTN);
+                           arregloBtnNo[i].setText("NO");
+                           arregloBtnNo[i].setLayoutParams(distribuirAncho);//ancho fijo
+
+
+                           arregloEditNo[i] = new EditText(getApplicationContext());
+                           arregloEditNo[i].setTextSize(12);
+                           LinearLayout.LayoutParams parametrosEditNo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                           parametrosEditNo.setMargins(20,10,0,20);
+                           arregloEditNo[i].setLayoutParams(parametrosEditNo);
+                           arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                           arregloEditNo[i].setLayoutParams(parametrostextViewRespuesta);
+                           arregloEditNo[i].setHint("Coloque la respuesta");
+                           arregloEditNo[i].setVisibility(View.GONE);
 
                                    int finalI = i;
 
@@ -634,11 +684,14 @@ public class Auditando extends AppCompatActivity {
                                        }
                                    });
 
-                                   linearLayoutHijo.addView(arregloBtnSi[i]);
+
+                                   linearLayoutNieto.addView(arregloBtnSi[i]);
+                                   linearLayoutNieto.addView(arregloBtnNo[i]);
+                                   linearLayoutHijo.addView(linearLayoutNieto);
                                    linearLayoutHijo.addView(arregloEditSi[i]);
-                                   linearLayoutHijo.addView(arregloBtnNo[i]);
-                                   linearLayoutHijo.addView(textView);
                                    linearLayoutHijo.addView(arregloEditNo[i]);
+                                   linearLayoutHijo.addView(textView);
+
 
 
                         }else if(tipo_boton.equals("Pregunta abierta")){
@@ -647,14 +700,21 @@ public class Auditando extends AppCompatActivity {
                             linearLayoutHijo.addView(editPreguntaAbierta[i]);
                         }else if(tipo_boton.equals("Si y No Opcional")){
 
+                           LinearLayout.LayoutParams parametrostextViewRespuesta = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                           parametrostextViewRespuesta.weight = 1;
+                           parametrostextViewRespuesta.setMargins(20,0,0,0);
+
                            arregloBtnSi[i] = new Button(getApplicationContext());
+                           arregloBtnSi[i].setLayoutParams(distribuirBTN);
                            arregloBtnSi[i].setText("SI");
+                           arregloBtnSi[i].setLayoutParams(distribuirAncho);//ancho fijo
+
 
                            arregloEditSi[i] = new EditText(getApplicationContext());
                            arregloEditSi[i].setTextSize(12);
                            arregloEditSi[i].setPadding(10,0,10,0);
                            LinearLayout.LayoutParams parametrosEditSi = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                           parametrosEditSi.setMargins(0,10,0,0);
+                           parametrosEditSi.setMargins(20,10,0,20);
                            arregloEditSi[i].setLayoutParams(parametrosEditSi);
                            arregloEditSi[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
                            arregloEditSi[i].setHint("Coloque la respuesta");
@@ -662,23 +722,30 @@ public class Auditando extends AppCompatActivity {
 
 
                            TextView textView = new TextView(getApplicationContext());
-                           //textView.setText("Detener la operación y solicitar que realice de acuerdo al estandar E-MI-CC");
-                           //textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
-                           textView.setPadding(20,0,0,0);
+                           textView.setText("Detener la operación y solicitar que realice de acuerdo al estándar.");
+                           textView.setBackground(getResources().getDrawable(R.drawable.fondo_detener_operacion));
+                           LinearLayout.LayoutParams parametrostextView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0);
+                           parametrostextView.weight = 1;
+                           parametrostextView.setMargins(20,0,0,20);
+                           parametrostextView.gravity = Gravity.CENTER_VERTICAL;
+                           //textView.setPadding(20,0,0,0);
+                           textView.setLayoutParams(parametrostextView);
                            textView.setVisibility(View.GONE);
 
 
                            arregloBtnNo[i] = new Button(getApplicationContext());
+                           arregloBtnNo[i].setLayoutParams(distribuirBTN);
                            arregloBtnNo[i].setText("NO");
+                           arregloBtnNo[i].setLayoutParams(distribuirAncho);//ancho fijo
 
 
                            arregloEditNo[i] = new EditText(getApplicationContext());
                            arregloEditNo[i].setTextSize(12);
-                           arregloEditNo[i].setPadding(10,0,10,0);
-                           LinearLayout.LayoutParams parametros = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                           parametros.setMargins(0,10,0,0);
-                           arregloEditNo[i].setLayoutParams(parametros);
+                           LinearLayout.LayoutParams parametrosEditNo = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                           parametrosEditNo.setMargins(20,10,0,20);
+                           arregloEditNo[i].setLayoutParams(parametrosEditNo);
                            arregloEditNo[i].setBackground(getResources().getDrawable(R.drawable.fondo_edits_preguntas));
+                           arregloEditNo[i].setLayoutParams(parametrostextViewRespuesta);
                            arregloEditNo[i].setHint("Coloque la respuesta");
                            arregloEditNo[i].setVisibility(View.GONE);
 
@@ -720,9 +787,10 @@ public class Auditando extends AppCompatActivity {
                                }
                            });
 
-                           linearLayoutHijo.addView(arregloBtnSi[i]);
+                           linearLayoutNieto.addView(arregloBtnSi[i]);
+                           linearLayoutNieto.addView(arregloBtnNo[i]);
+                           linearLayoutHijo.addView(linearLayoutNieto);
                            linearLayoutHijo.addView(arregloEditSi[i]);
-                           linearLayoutHijo.addView(arregloBtnNo[i]);
                            linearLayoutHijo.addView(textView);
                            linearLayoutHijo.addView(arregloEditNo[i]);
 
@@ -734,6 +802,7 @@ public class Auditando extends AppCompatActivity {
                         TextView separador = new TextView(getApplicationContext());
                         separador.setLayoutParams(new LinearLayout.LayoutParams(5, LinearLayout.LayoutParams.MATCH_PARENT));
                         linearLayoutPadre.addView(separador);
+                        linearLayoutPadre.setPadding(0,0,0,50);
                         linearLayoutPadre.addView(linearLayoutHijo);
 
                     }
