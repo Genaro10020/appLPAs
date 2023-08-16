@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
@@ -572,10 +573,23 @@ public class PlanDeAccion  extends AppCompatActivity {
 
                    /* Bundle extras = data.getExtras();
                     imageBitmap = (Bitmap) extras.get("data");*/
+
+
                     imageBitmap= BitmapFactory.decodeFile(currentPhotoPath);//LINEA ANTERIOR
+
+                    // Create a matrix for the rotation
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+
+                    // Rotate the bitmap
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
+
+
                     int newWidth = 1000;
                     int newHeight = 1000;;
-                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, newWidth, newHeight, false);
+
+
                     fotografia.setImageBitmap(resizedBitmap);
                     Bitmap bitmap = ((BitmapDrawable)fotografia.getDrawable()).getBitmap();
                     bitmapf=bitmap;
