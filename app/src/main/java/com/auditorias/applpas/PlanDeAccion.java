@@ -15,6 +15,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -35,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -81,6 +83,7 @@ public class PlanDeAccion  extends AppCompatActivity {
     TextView titulo,subtitulo, textUno;
     ImageView fotografia, PDFView;
     Bitmap imageBitmap,bitmapf;
+    private String currentPhotoPath;
     private static final int REQUEST_IMAGE_GALLERY = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_PDF = 3;
@@ -525,10 +528,27 @@ public class PlanDeAccion  extends AppCompatActivity {
     }
 
     public void tomarFoto(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+       /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }*/
+
+        String fileName="photo";
+        File StorageDirectory= getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        try {
+            File imageFile=File.createTempFile(fileName,".jpg",StorageDirectory);
+            currentPhotoPath=imageFile.getAbsolutePath();
+            Uri imageUri=  FileProvider.getUriForFile(PlanDeAccion.this,
+                    "com.auditorias.applpas.fileprovider",imageFile);
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
     public void desdeGaleria(){
@@ -550,8 +570,9 @@ public class PlanDeAccion  extends AppCompatActivity {
                     PDFView.setImageDrawable(null); //formatenado la vista
                     documentoPDF=null; //formateando variable
 
-                    Bundle extras = data.getExtras();
-                    imageBitmap = (Bitmap) extras.get("data");
+                   /* Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");*/
+                    imageBitmap= BitmapFactory.decodeFile(currentPhotoPath);//LINEA ANTERIOR
                     int newWidth = 1000;
                     int newHeight = 1000;;
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, newWidth, newHeight, false);
