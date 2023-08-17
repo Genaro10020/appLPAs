@@ -563,7 +563,8 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditSi[finalI].setVisibility(View.GONE);
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.GONE);
-                                           arregloEditNA[finalI].setVisibility(View.VISIBLE);
+                                           arregloEditNA[finalI].setText("n/a");
+                                           //arregloEditNA[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNA[finalI].getText().toString();
 
                                            arregloBtnSi[finalI].setTextColor(Color.BLACK);

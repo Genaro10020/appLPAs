@@ -264,11 +264,13 @@ public class ResultadoAuditoria extends AppCompatActivity {
                        LinearLayout.LayoutParams.WRAP_CONTENT,
                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
                layoutParams.gravity = Gravity.CENTER;
+               layoutParams.setMargins(0,0,0,100);
+
 
                btnEnviarCorreo = new Button(this);
                btnEnviarCorreo.setText("Enviar Correo");
                btnEnviarCorreo.setLayoutParams(layoutParams);
-               btnEnviarCorreo.setPadding(10, 0, 10, 50);
+               btnEnviarCorreo.setPadding(0,5,0,5);
                btnEnviarCorreo.setTextColor(Color.WHITE);
                btnEnviarCorreo.setBackgroundResource(R.drawable.boton_entrar);
 
