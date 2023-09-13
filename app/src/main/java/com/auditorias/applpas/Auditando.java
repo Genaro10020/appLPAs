@@ -10,12 +10,14 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,12 +43,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 public class Auditando extends AppCompatActivity {
+    private static final int REQUEST_CODE_SPEECH_INPUT = 100;
     JSONArray arrayPreguntas;
-    int cantidad_preguntas=0;
+    int cantidad_preguntas=0,numero=0;
      double CalificacionFinal= 0.0;
 
     TextView textUno;
@@ -60,9 +64,10 @@ public class Auditando extends AppCompatActivity {
     EditText[] arregloEditNA;
     EditText[] editPreguntaAbierta;
     String[] arregloBtnSeleccionado;
+    ImageView[] iconoVoz;
 
     ObjetoRespuesta[] recopilandoRespuestas;
-    String contesto;
+    String contesto,spokenText,opcional;
     RequestQueue queue;
     Button btnGuardar;
 
@@ -256,6 +261,40 @@ public class Auditando extends AppCompatActivity {
     }
 
 
+    private void startSpeechToText(int numeroEditNo, String repuestaOpcional) {
+        numero = numeroEditNo;
+        opcional = repuestaOpcional;
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Habla ahora...");
+
+        try {
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+        } catch (Exception e) {
+            Toast toas = Toast.makeText(getApplicationContext(),"Dispositivo no soporta esta opcion",Toast.LENGTH_SHORT);
+            toas.show();
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (result != null && !result.isEmpty()) {
+                spokenText = result.get(0);
+                if(opcional==""){
+                    arregloEditNo[numero].setText(spokenText);
+                }else{
+                    arregloEditSi[numero].setText(spokenText);
+                }
+            }
+        }
+    }
+
+
+
     private boolean verificarConexionInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -362,6 +401,7 @@ public class Auditando extends AppCompatActivity {
                     arregloEditNo = new EditText[cantidad_preguntas];
                     arregloEditNA = new EditText[cantidad_preguntas];
                     editPreguntaAbierta = new EditText[cantidad_preguntas];
+                    iconoVoz = new ImageView[cantidad_preguntas];
                     arregloBtnSeleccionado = new String[cantidad_preguntas];
 
                     // Obtener el color de colors.xml
@@ -424,8 +464,6 @@ public class Auditando extends AppCompatActivity {
                         }else{
                             textViewPregunta.setText(i+1+".-"+pregunta);
                         }
-
-
 
                         // Configura cualquier otro atributo deseado
                         textViewPregunta.setTextSize(14);
@@ -502,7 +540,19 @@ public class Auditando extends AppCompatActivity {
                                        arregloEditNA[i].setHint("Coloque la respuesta");
                                        arregloEditNA[i].setVisibility(View.GONE);
 
-                                   int finalI = i;
+                           iconoVoz[i] = new ImageView(getApplicationContext());
+                           int anchoDeseadoEnPixeles = 100; // Cambia esto al ancho que desees en píxeles
+                           int altoDeseadoEnPixeles = 100;
+                           LinearLayout.LayoutParams parametrosIconoVoz = new LinearLayout.LayoutParams(anchoDeseadoEnPixeles,altoDeseadoEnPixeles);
+                           parametrosIconoVoz.setMargins(20,10,0,20);
+                           parametrosIconoVoz.gravity = Gravity.CENTER_HORIZONTAL;
+                           iconoVoz[i].setLayoutParams(parametrosIconoVoz);
+                           iconoVoz[i].setBackground(getResources().getDrawable(R.drawable.ic_micro));
+                           iconoVoz[i].setVisibility(View.GONE);
+
+
+
+                                       int finalI = i;
 
                                    arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -515,6 +565,7 @@ public class Auditando extends AppCompatActivity {
                                             textView.setVisibility(View.GONE);
                                             arregloEditNA[finalI].setVisibility(View.GONE);
                                             arregloEditSi[finalI].setText("Respondio SI");
+                                            iconoVoz[finalI].setVisibility(View.GONE);
                                             arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
 
                                             arregloBtnSi[finalI].setTextColor(Color.WHITE);
@@ -540,8 +591,18 @@ public class Auditando extends AppCompatActivity {
                                             textView.setVisibility(View.VISIBLE);
                                             arregloEditNA[finalI].setVisibility(View.GONE);
                                             arregloEditNo[finalI].setVisibility(View.VISIBLE);
-                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
 
+                                            iconoVoz[finalI].setVisibility(View.VISIBLE);
+                                            final int currentFinalI = finalI;
+                                            iconoVoz[finalI].setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    String bandera = "";
+                                                    startSpeechToText(currentFinalI,bandera);
+                                                    arregloEditNo[finalI].requestFocus();
+                                                }
+                                            });
+                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
                                             arregloBtnSi[finalI].setTextColor(Color.BLACK);
                                             arregloBtnNo[finalI].setTextColor(Color.WHITE);
                                             arregloBtnNA[finalI].setTextColor(Color.BLACK);
@@ -563,6 +624,7 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditSi[finalI].setVisibility(View.GONE);
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.GONE);
+                                           iconoVoz[finalI].setVisibility(View.GONE);
                                            arregloEditNA[finalI].setText("n/a");
                                            //arregloEditNA[finalI].setVisibility(View.VISIBLE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnNA[finalI].getText().toString();
@@ -583,14 +645,13 @@ public class Auditando extends AppCompatActivity {
                                     // Agrega los tres botones al LinearLayout hijo
 
 
-
-
                                    linearLayoutNieto.addView(arregloBtnSi[i]);
                                    linearLayoutNieto.addView(arregloBtnNo[i]);
                                    linearLayoutNieto.addView(arregloBtnNA[i]);
                                    linearLayoutHijo.addView(linearLayoutNieto);
 
                                    linearLayoutHijo.addView(arregloEditNo[i]);
+                                   linearLayoutHijo.addView(iconoVoz[i]);
                                    linearLayoutHijo.addView(arregloEditSi[i]);
                                    linearLayoutHijo.addView(textView);
                                    linearLayoutHijo.addView(arregloEditNA[i]);
@@ -647,6 +708,17 @@ public class Auditando extends AppCompatActivity {
                            arregloEditNo[i].setHint("Coloque la respuesta");
                            arregloEditNo[i].setVisibility(View.GONE);
 
+
+                           iconoVoz[i] = new ImageView(getApplicationContext());
+                           int anchoDeseadoEnPixeles = 100; // Cambia esto al ancho que desees en píxeles
+                           int altoDeseadoEnPixeles = 100;
+                           LinearLayout.LayoutParams parametrosIconoVoz = new LinearLayout.LayoutParams(anchoDeseadoEnPixeles,altoDeseadoEnPixeles);
+                           parametrosIconoVoz.setMargins(20,10,0,20);
+                           parametrosIconoVoz.gravity = Gravity.CENTER_HORIZONTAL;
+                           iconoVoz[i].setLayoutParams(parametrosIconoVoz);
+                           iconoVoz[i].setBackground(getResources().getDrawable(R.drawable.ic_micro));
+                           iconoVoz[i].setVisibility(View.GONE);
+
                                    int finalI = i;
 
                                    arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
@@ -655,6 +727,7 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditNo[finalI].setText("");
                                            //arregloEditSi[finalI].setVisibility(View.VISIBLE);
                                            textView.setVisibility(View.GONE);
+                                           iconoVoz[finalI].setVisibility(View.GONE);
                                            arregloEditSi[finalI].setText("Respondio SI");
                                            arregloEditNo[finalI].setVisibility(View.GONE);
                                            arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
@@ -675,6 +748,18 @@ public class Auditando extends AppCompatActivity {
                                            arregloEditSi[finalI].setVisibility(View.GONE);
                                            textView.setVisibility(View.VISIBLE);
                                            arregloEditNo[finalI].setVisibility(View.VISIBLE);
+
+                                           iconoVoz[finalI].setVisibility(View.VISIBLE);
+                                           final int currentFinalI = finalI;
+                                           iconoVoz[finalI].setOnClickListener(new View.OnClickListener() {
+                                               @Override
+                                               public void onClick(View view) {
+                                                   String bandera = "";
+                                                   startSpeechToText(currentFinalI,bandera);
+                                                   arregloEditNo[finalI].requestFocus();
+                                               }
+                                           });
+
                                            arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
 
                                            arregloBtnSi[finalI].setTextColor(Color.BLACK);
@@ -688,9 +773,11 @@ public class Auditando extends AppCompatActivity {
 
                                    linearLayoutNieto.addView(arregloBtnSi[i]);
                                    linearLayoutNieto.addView(arregloBtnNo[i]);
+
                                    linearLayoutHijo.addView(linearLayoutNieto);
                                    linearLayoutHijo.addView(arregloEditSi[i]);
                                    linearLayoutHijo.addView(arregloEditNo[i]);
+                                   linearLayoutHijo.addView(iconoVoz[i]);
                                    linearLayoutHijo.addView(textView);
 
 
@@ -750,6 +837,17 @@ public class Auditando extends AppCompatActivity {
                            arregloEditNo[i].setHint("Coloque la respuesta");
                            arregloEditNo[i].setVisibility(View.GONE);
 
+
+                           iconoVoz[i] = new ImageView(getApplicationContext());
+                           int anchoDeseadoEnPixeles = 100; // Cambia esto al ancho que desees en píxeles
+                           int altoDeseadoEnPixeles = 100;
+                           LinearLayout.LayoutParams parametrosIconoVoz = new LinearLayout.LayoutParams(anchoDeseadoEnPixeles,altoDeseadoEnPixeles);
+                           parametrosIconoVoz.setMargins(20,10,0,20);
+                           parametrosIconoVoz.gravity = Gravity.CENTER_HORIZONTAL;
+                           iconoVoz[i].setLayoutParams(parametrosIconoVoz);
+                           iconoVoz[i].setBackground(getResources().getDrawable(R.drawable.ic_micro));
+                           iconoVoz[i].setVisibility(View.GONE);
+
                            int finalI = i;
 
                            arregloBtnSi[i].setOnClickListener(new View.OnClickListener() {
@@ -757,6 +855,18 @@ public class Auditando extends AppCompatActivity {
                                public void onClick(View v) {
                                    arregloEditNo[finalI].setText("");
                                    arregloEditSi[finalI].setVisibility(View.VISIBLE);
+                                   iconoVoz[finalI].setVisibility(View.VISIBLE);
+
+                                   iconoVoz[finalI].setVisibility(View.VISIBLE);
+                                   final int currentFinalI = finalI;
+                                   iconoVoz[finalI].setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View view) {
+                                           String respuestaOpcional= "Si";
+                                           arregloEditSi[finalI].requestFocus();
+                                           startSpeechToText(currentFinalI,respuestaOpcional);
+                                       }
+                                   });
                                    //textView.setVisibility(View.GONE);
                                    //arregloEditNo[finalI].setVisibility(View.GONE);
                                    arregloBtnSeleccionado[finalI] = arregloBtnSi[finalI].getText().toString();
@@ -776,6 +886,7 @@ public class Auditando extends AppCompatActivity {
                                    arregloEditNo[finalI].setText("Respondio NO");
                                    arregloEditSi[finalI].setText("");
                                    arregloEditSi[finalI].setVisibility(View.GONE);
+                                   iconoVoz[finalI].setVisibility(View.GONE);
                                    //textView.setVisibility(View.VISIBLE);
                                    //arregloEditNo[finalI].setVisibility(View.VISIBLE);
                                    arregloBtnSeleccionado[finalI] = arregloBtnNo[finalI].getText().toString();
@@ -792,6 +903,7 @@ public class Auditando extends AppCompatActivity {
                            linearLayoutNieto.addView(arregloBtnNo[i]);
                            linearLayoutHijo.addView(linearLayoutNieto);
                            linearLayoutHijo.addView(arregloEditSi[i]);
+                           linearLayoutHijo.addView(iconoVoz[i]);
                            linearLayoutHijo.addView(textView);
                            linearLayoutHijo.addView(arregloEditNo[i]);
 
