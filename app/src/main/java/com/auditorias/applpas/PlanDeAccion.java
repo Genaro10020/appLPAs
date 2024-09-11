@@ -46,7 +46,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.github.barteksc.pdfviewer.PDFView;
+
+//import com.github.barteksc.pdfviewer.PDFView;
+//import com.github.barteksc.pdfviewer.PDFView;
+//import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,10 +70,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.util.FitPolicy;
-import com.shockwave.pdfium.PdfDocument;
-import com.shockwave.pdfium.PdfiumCore;
+
+//import com.shockwave.pdfium.PdfDocument;
+//import com.shockwave.pdfium.PdfiumCore;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -374,7 +376,7 @@ public class PlanDeAccion  extends AppCompatActivity {
 
 
                                         Uri uri = Uri.parse(url2);
-                                        cargarPDFEnImageView(uri);
+                                        //cargarPDFEnImageView(uri);
 
                                         button.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -496,37 +498,6 @@ public class PlanDeAccion  extends AppCompatActivity {
         }
     }
 
-    public void cargarPDFEnImageView(Uri pdfUri) {
-        try {
-            // Inicializar PdfiumCore
-            PdfiumCore pdfiumCore = new PdfiumCore(this);
-
-            // Abrir el archivo PDF utilizando la Uri
-            ParcelFileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(pdfUri, "r");
-            PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
-
-            // Cargar la primera página del PDF
-            pdfiumCore.openPage(pdfDocument, 0);
-            int width = pdfiumCore.getPageWidthPoint(pdfDocument, 0);
-            int height = pdfiumCore.getPageHeightPoint(pdfDocument, 0);
-
-            // Crear un Bitmap con las dimensiones de la página del PDF
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-            // Renderizar la página del PDF en el Bitmap
-            pdfiumCore.renderPageBitmap(pdfDocument, bitmap, 0, 0, 0, width, height);
-
-            // Configurar el Bitmap en el ImageView
-
-            PDFView.setImageBitmap(bitmap);
-
-            // Liberar los recursos
-            pdfiumCore.closeDocument(pdfDocument);
-            fileDescriptor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void tomarFoto(){
        /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -624,7 +595,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                     btnPDF.setBackgroundResource(R.drawable.fondo_btn);
                     btnPDF.setTextColor(Color.WHITE);
                     Uri pdfUri = data.getData();
-                    cargarPDFEnImageView(pdfUri);
+                    //cargarPDFEnImageView(pdfUri);
 
                     InputStream inputStream = null;
                     try {

@@ -94,7 +94,7 @@ public class HallazgosResponsable extends AppCompatActivity {
     public void consultarHallazgosEnAuditorias(){
         String url = "https://vvnorth.com/lpa/app/consultarHallazgosEnAuditorias.php";
         StringRequest request = new StringRequest(Request.Method.POST,url, response -> {
-            Log.e("Respuesta","consultarHallazgosEnAuditorias: "+response);
+            Log.e("Respuesta","consultarHallazgosEnAuditorias del Responsable:"+num_nomina+"Respuesta: "+response);
 
             try {
                 JSONArray arregloHallazgos = new JSONArray(response);
