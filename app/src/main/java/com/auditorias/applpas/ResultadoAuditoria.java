@@ -83,7 +83,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
             }
         });
 
-
+        enviarCorreoAuditoria();
         btnCerrar = (Button)findViewById(R.id.btnCerrar) ;
         btnCerrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,8 +103,10 @@ public class ResultadoAuditoria extends AppCompatActivity {
     }
 
     public void onBackPressed(){// variable RESULT_OK espara que refresque auditorias cuando llegue hay
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
+        //Intent intent = new Intent();
+        //setResult(RESULT_OK, intent);
+        Intent intent = new Intent(this,Auditorias.class);
+        startActivity(intent);
         finish();
     }
 
@@ -278,15 +280,14 @@ public class ResultadoAuditoria extends AppCompatActivity {
                btnEnviarCorreo.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                       /*Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
-                       startActivity(intent);*/
-                       btnEnviarCorreo.setEnabled(false);
+                       Intent intent = new Intent(ResultadoAuditoria.this,Auditorias.class);
+                       startActivity(intent);
+                       /*btnEnviarCorreo.setEnabled(false);
                        btnEnviarCorreo.setText("Enviando...");
-                       enviarCorreoAuditoria();
+                       enviarCorreoAuditoria();*/
                    }
                });
            }
-
 
 
         }
@@ -321,4 +322,8 @@ public class ResultadoAuditoria extends AppCompatActivity {
         RequestQueue solicitud = Volley.newRequestQueue(this);
         solicitud.add(respuesta);
     }
+
+
+
+
 }
