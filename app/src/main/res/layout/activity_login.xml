@@ -18,110 +18,127 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_gravity="center_horizontal"
-
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/logo" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_gravity="center_horizontal"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="LPA's \n B I E N V E  N I D @"
-            android:textColor="#8B0000"
-            android:textSize="30dp" />
-        </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:layout_weight="1"
-        >
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/cuadro_fondo_editext"
+            android:layout_marginTop="50dp"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="150dp"
 
-            <EditText
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/logo" />
 
-                android:id="@+id/nomina"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/fondo_edits"
-                android:ems="10"
-                android:gravity="center_vertical"
-                android:hint="Número de Nómina"
-                android:inputType="textPersonName"
-                android:textAlignment="center"
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="LPA's \n B I E N V E  N I D @"
                 android:textColor="#8B0000"
-                tools:ignore="RtlCompat" />
-
-
-            <EditText
-                android:id="@+id/clave"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="6dp"
-                android:background="@drawable/fondo_edits"
-                android:ems="10"
-                android:gravity="center_vertical"
-                android:hint="Contraseña"
-                android:inputType="textPersonName"
-                android:textAlignment="center"
-                android:textColor="#8B0000"
-                tools:ignore="RtlCompat" />
+                android:textSize="30dp" />
         </LinearLayout>
-    </LinearLayout>
 
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:gravity="center"
-          android:layout_weight="1">
-        <Button
-            android:id="@+id/btnIngresar"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="100px"
-            android:background="@drawable/boton_entrar"
-            android:shadowColor="#300000"
-            android:text="Ingresar"
-            android:textColor="#ffffff"
-            android:textSize="40px" />
-      </LinearLayout>
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/cuadro_fondo_editext"
+                android:orientation="vertical">
+
+
+                <EditText
+
+                    android:id="@+id/nomina"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/fondo_edits"
+                    android:ems="10"
+                    android:gravity="center_vertical"
+                    android:hint="Número de Nómina"
+                    android:inputType="textPersonName"
+                    android:textAlignment="center"
+                    android:textColor="#8B0000"
+                    tools:ignore="RtlCompat" />
+
+
+                <EditText
+                    android:id="@+id/clave"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/fondo_edits"
+                    android:ems="10"
+                    android:gravity="center_vertical"
+                    android:hint="Contraseña"
+                    android:inputType="textPersonName"
+                    android:textAlignment="center"
+                    android:textColor="#8B0000"
+                    tools:ignore="RtlCompat" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnIngresar"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/boton_entrar"
+                android:shadowColor="#300000"
+                android:text="Ingresar"
+                android:textColor="#ffffff"
+                android:textSize="40px" />
+        </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+        android:text="v1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
