@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -29,7 +31,8 @@ import java.util.Map;
 public class Login extends AppCompatActivity {
 
     RequestQueue requestQueue;
-
+    RadioGroup tipoPlanta;
+    String planta;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,24 +41,34 @@ public class Login extends AppCompatActivity {
         EditText editNomina = (EditText)findViewById(R.id.nomina);
         EditText editClave = (EditText)findViewById(R.id.clave);
 
+        tipoPlanta= findViewById(R.id.tipo_planta);
+
+
+
+
 
         btnIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nomina = editNomina.getText().toString();
-                String clave = editClave.getText().toString();
-                verificarLogin(nomina,clave);
+                int checkedButtonId = tipoPlanta.getCheckedRadioButtonId();
+                if (checkedButtonId != -1) { // Verifica que haya un botón seleccionado
+                    planta= getResources().getResourceEntryName(checkedButtonId);
+                    Log.e("ID", "Seleccionado: " + planta);
+                    String nomina = editNomina.getText().toString();
+                    String clave = editClave.getText().toString();
+                    verificarLogin(nomina,clave,planta);
+                } else {
+                    Log.e("ID", "Ninguna Planta Seleccionada");
+                }
+
+
             }
         });
-
-
-
-
     }
 
 
     //METODO PARA VERIFICAR SI EXISTE EL USUARIO
-            private void verificarLogin(String nomina, String clave){
+            private void verificarLogin(String nomina, String clave, String planta){
                 String url = "https://vvnorth.com/lpa/app/verificar.php";
                 StringRequest request = new StringRequest(Request.Method.POST, url,
                         response -> {
@@ -76,6 +89,7 @@ public class Login extends AppCompatActivity {
 
                                 SharedPreferences sessionGuardada = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sessionGuardada.edit();
+                                editor.putString("PLANTA",planta);
                                 editor.putString("ID_USUARIO",id_usuario);
                                 editor.putString("NUMERO_NOMINA",num_nomina);
                                 editor.putString("NOMBRE",nombre);
@@ -107,6 +121,7 @@ public class Login extends AppCompatActivity {
                         Map<String, String> params = new HashMap<>();
                         params.put("Usuario", nomina);
                         params.put("Contrasena", clave);
+                        params.put("Planta", planta);
                         return params;
                     }
                 };
