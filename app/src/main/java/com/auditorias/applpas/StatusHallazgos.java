@@ -33,12 +33,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StatusHallazgos extends AppCompatActivity {
-    String id_usuario,nombre,tipo_usuario,num_nomina, Codigo;
+    String id_usuario,nombre,tipo_usuario,num_nomina, Codigo,planta;
     public void onCreate( Bundle savedInstaceState){
         super.onCreate(savedInstaceState);
         setContentView(R.layout.activity_status_hallazgos);
 
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
+        planta = miSession.getString("PLANTA","No existe ID en MiSession");
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
@@ -292,6 +293,7 @@ public class StatusHallazgos extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+                params.put("planta", planta);
                 params.put("codigo", Codigo);
                 params.put("nomina_responsable", num_nomina);
                 return params;

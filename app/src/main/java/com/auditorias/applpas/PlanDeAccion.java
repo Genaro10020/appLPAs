@@ -78,7 +78,7 @@ import com.squareup.picasso.Target;
 
 
 public class PlanDeAccion  extends AppCompatActivity {
-    String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso,documentoPDF,comentario_evidencia;
+    String id_usuario,nombre,tipo_usuario, codigo_auditoria, num_nomina, id_hallazgo, nombre_evaluado,plan_de_accion, feha_compromiso,documentoPDF,comentario_evidencia,planta;
     Button btnGuardar, btnPDF, btnImagen;
     EditText editplanAccion;
     Calendar calendar;
@@ -100,6 +100,7 @@ public class PlanDeAccion  extends AppCompatActivity {
         setContentView(R.layout.activity_plan_de_accion);
 
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
+        planta = miSession.getString("PLANTA","No Planta en MiSession");
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
@@ -477,6 +478,7 @@ public class PlanDeAccion  extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String,String> parametros = new HashMap<>();
+                parametros.put("planta",planta);
                 parametros.put("id_hallazgo",id_hallazgo);
 
                 return parametros;
@@ -637,6 +639,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                     Intent intent = new Intent(PlanDeAccion.this,StatusHallazgos.class);
                     intent.putExtra("CODIGO",codigo_auditoria);
                     startActivity(intent);
+                    finish();
                 }else{
                     // Crear una instancia de Toast
                     Toast toast = Toast.makeText(getApplicationContext(), "No se guardó correctamente" + response, Toast.LENGTH_SHORT);
@@ -666,6 +669,7 @@ public class PlanDeAccion  extends AppCompatActivity {
                 if(documentoPDF!=null){
                     parametros.put("pdf",documentoPDF);
                 }
+                parametros.put("planta",planta);
                 parametros.put("codigo",codigo_auditoria);
                 parametros.put("id_hallazgo",id_hallazgo);
                 parametros.put("comentario_evidencia",comentario_evidencia);
@@ -717,6 +721,7 @@ public class PlanDeAccion  extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String,String> parametros = new HashMap<>();
+                parametros.put("planta",planta);
                 parametros.put("id_hallazgo",id_hallazgo);
                 parametros.put("plan_de_accion",plan_de_accion);
                 parametros.put("feha_compromiso",feha_compromiso);

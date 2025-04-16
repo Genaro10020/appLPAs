@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HistorialAuditoriasRealizadas extends AppCompatActivity {
-    String id_usuario, nombre, tipo_usuario,nomina_auditor;
+    String id_usuario, nombre, tipo_usuario,nomina_auditor,planta;
     Button btnCerrar;
     TextView texto_auditorias_pendientes;
     Button btn_auditorias_pendientes;
@@ -47,6 +47,7 @@ public class HistorialAuditoriasRealizadas extends AppCompatActivity {
         texto_auditorias_pendientes.setText("Auditorias Pendientes");
 
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
+        planta = miSession.getString("PLANTA","No Planta en MiSession");
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
@@ -181,6 +182,7 @@ public class HistorialAuditoriasRealizadas extends AppCompatActivity {
        }){
            protected Map<String,String> getParams(){
                Map<String,String> params = new HashMap<>();
+               params.put("planta",planta);
                params.put("nomina_auditor",nomina_auditor);
                return params;
            }

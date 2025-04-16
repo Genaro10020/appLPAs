@@ -44,7 +44,7 @@ import kotlin.jvm.internal.Intrinsics;
 
 public class ResultadoAuditoria extends AppCompatActivity {
 
-    String Codigo;
+    String Codigo,planta;
     int tamanioArreglo;
     JSONArray arregloConsulta;
     Button btnCerrar;
@@ -56,6 +56,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
 
         Intent intent = getIntent();
         Codigo = intent.getStringExtra("CODIGO");
+        planta = intent.getStringExtra("PLANTA");
 
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
         titulo.setText("Resultado");
@@ -147,6 +148,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
         }){
           public Map<String,String> getParams(){
               Map<String,String> parametros = new HashMap<>();
+              parametros.put("planta",planta);
               parametros.put("Codigo",Codigo);
               return parametros;
           }
@@ -314,6 +316,7 @@ public class ResultadoAuditoria extends AppCompatActivity {
         }){
             protected Map<String,String> getParams(){
                 Map<String,String> parametros = new HashMap<>();
+                parametros.put("planta",planta);
                 parametros.put("Codigo",Codigo);
                 return parametros;
             }

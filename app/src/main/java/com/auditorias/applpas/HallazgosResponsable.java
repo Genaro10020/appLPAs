@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HallazgosResponsable extends AppCompatActivity {
-    String id_usuario,nombre,tipo_usuario,num_nomina;
+    String id_usuario,nombre,tipo_usuario,num_nomina, planta;
     Button btnCerrar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class HallazgosResponsable extends AppCompatActivity {
         subTitulo.setText("Listado de Auditorías con Hallazgos.");
 
         SharedPreferences miSession = getSharedPreferences("MiSession", Context.MODE_PRIVATE);
+        planta = miSession.getString("PLANTA","No Planta en MiSession");
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
@@ -98,6 +101,8 @@ public class HallazgosResponsable extends AppCompatActivity {
 
             try {
                 JSONArray arregloHallazgos = new JSONArray(response);
+
+
                 if(arregloHallazgos.length()>0){
 
 
@@ -128,13 +133,25 @@ public class HallazgosResponsable extends AppCompatActivity {
                         TextView textProceso = new TextView(this);
                         TextView textCantidadHallazgos = new TextView(this);
                         TextView textEncontradas = new TextView(this);
+                        TextView textMotivoRechazo = new TextView(this);
 
                         String Codigo =objetoDentroArregloHallazgos.getString("codigo");
+                        String motivoRechazo =objetoDentroArregloHallazgos.getString("motivo_rechazo");
+                        String status =objetoDentroArregloHallazgos.getString("status_hallazgos");
+
+                        int colorSubtitulos = R.color.red_400;// lo estoy tomando de res/values/colors.xml
+                        int textColorRojoObscuro = ContextCompat.getColor(this, colorSubtitulos);
 
                         textCodigo.setText(Html.fromHtml("<b>Codigo: </b>" + Codigo));
                         textProceso.setText(Html.fromHtml("<b>Proceso: </b>" + objetoDentroArregloHallazgos.getString("proceso")));
                         textCantidadHallazgos.setText(Html.fromHtml("<b>Hallazgos: </b>" + objetoDentroArregloHallazgos.getString("sumaHallazgos")));
                         textEncontradas.setText(Html.fromHtml("<b>Encontrados: </b>" + objetoDentroArregloHallazgos.getString("fecha_realizada")));
+                        if(status.equals("Pendiente Evidencia") && !motivoRechazo.equals("")){
+                            textMotivoRechazo.setText(Html.fromHtml("<b>Motivo Rechazo: </b>" + motivoRechazo));
+                            textMotivoRechazo.setTypeface(null,Typeface.BOLD);
+                            textMotivoRechazo.setTextColor(textColorRojoObscuro);
+                        }
+
 
                         Button btnVerHallazgos = new Button(this);
                         btnVerHallazgos.setLayoutParams(btnParams);
@@ -176,6 +193,7 @@ public class HallazgosResponsable extends AppCompatActivity {
                         linearLayoutHijo.addView(textProceso);
                         linearLayoutHijo.addView(textCantidadHallazgos);
                         linearLayoutHijo.addView(textEncontradas);
+                        linearLayoutHijo.addView(textMotivoRechazo);
                         linearLayoutHijo.addView(btnVerHallazgos);
 
                         linearLayoutPadre.addView(linearLayoutHijo);
@@ -199,6 +217,7 @@ public class HallazgosResponsable extends AppCompatActivity {
         }){
             protected Map<String,String> getParams(){
                 Map<String,String> parametros = new HashMap<>();
+                parametros.put("planta", planta);
                 parametros.put("num_nomina_responsable",num_nomina);
                 return parametros;
             }

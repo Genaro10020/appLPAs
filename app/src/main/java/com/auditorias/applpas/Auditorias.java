@@ -41,6 +41,7 @@ import java.util.Map;
 public class Auditorias extends AppCompatActivity {
     RequestQueue requestQueue;
     String id_usuario;
+    String planta;
     String num_nomina;
     String nombre;
     String tipo_usuario;
@@ -95,6 +96,7 @@ public class Auditorias extends AppCompatActivity {
         Log.e("","Auditor"+nombre+"id"+id_usuario+"tipo"+tipo_usuario);*/
 
         SharedPreferences miSession = getSharedPreferences("MiSession",Context.MODE_PRIVATE);
+        planta = miSession.getString("PLANTA","No Planta en MiSession");
         id_usuario = miSession.getString("ID_USUARIO","No existe ID en MiSession");
         nombre = miSession.getString("NOMBRE","No existe NOMBRE en MiSession");
         tipo_usuario = miSession.getString("TIPO_USUARIO","No existe TIPO_USUARIO en MiSession");
@@ -257,6 +259,7 @@ public class Auditorias extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("id_usuario", id_usuario);
+                params.put("planta", planta);
                 return params;
             }
         };
@@ -268,6 +271,7 @@ public class Auditorias extends AppCompatActivity {
 
    private void enviarAuditando(String id_area, String id_proceso,String codigo ,String area, String titulo, String proceso,String responsable, String fecha_programada, String descripcion, String nomina_responsable,String nomina_auditor){
         Intent intent = new Intent(Auditorias.this, Auditando.class);
+        intent.putExtra("PLANTA",planta);
         intent.putExtra("NOMBRE_AUDITOR",nombre);
         intent.putExtra("CODIGO",codigo);
         intent.putExtra("AREA",area);

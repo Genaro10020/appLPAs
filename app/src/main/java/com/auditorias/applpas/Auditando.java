@@ -54,7 +54,7 @@ public class Auditando extends AppCompatActivity {
      double CalificacionFinal= 0.0;
 
     TextView textUno;
-    String id_area, id_proceso,Codigo,Area,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion;
+    String id_area, id_proceso,Codigo,Area,Nombre_Auditor,Titulo,Proceso,Nomina_Auditor,Nomina_Responsable,Responsable,Fecha_Programada,Descripcion,Calificacion,planta;
     String[] contableSINO;
     Button[] arregloBtnSi;
     Button[] arregloBtnNo;
@@ -83,6 +83,7 @@ public class Auditando extends AppCompatActivity {
         TextView titulo = (TextView)findViewById(R.id.titulo_toolbar);
 
         Intent intent = getIntent();
+        planta = intent.getStringExtra("PLANTA");
         Nombre_Auditor = intent.getStringExtra("NOMBRE_AUDITOR");
         id_area = intent.getStringExtra("ID_AREA");
         id_proceso = intent.getStringExtra("ID_PROCESO");
@@ -322,6 +323,7 @@ public class Auditando extends AppCompatActivity {
                                 textUno.setText("Guardar");
                                 Intent intent = new Intent (getApplicationContext(), ResultadoAuditoria.class);
                                 intent.putExtra("CODIGO",Codigo);
+                                intent.putExtra("PLANTA",planta);
                                 startActivity(intent);
                                 finish();
                             }
@@ -349,6 +351,7 @@ public class Auditando extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
+                params.put("planta",planta);
                 params.put("total_preguntas", String.valueOf(cantidad_preguntas));
                 params.put("codigo",Codigo);
                 params.put("area",Area);
@@ -936,6 +939,7 @@ public class Auditando extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams(){
                 Map<String, String> params = new HashMap<>();
+                params.put("planta", planta);
                 params.put("id_proceso", id_proceso);
                 params.put("id_area", id_area);
                 return params;

@@ -102,7 +102,7 @@ public class Login extends AppCompatActivity {
                                         Intent intent = new Intent(this,HallazgosResponsable.class);
                                         startActivity(intent);
                                     }else{
-                                        Toast toast = Toast.makeText(getApplicationContext(),"No exite ese tipo de usuario.",Toast.LENGTH_LONG);
+                                        Toast toast = Toast.makeText(getApplicationContext(),"No exite ese tipo de usuario."+planta,Toast.LENGTH_LONG);
                                         toast.show();
                                     }
 
